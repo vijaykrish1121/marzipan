@@ -1,6 +1,9 @@
-# 🧁 Marzipan
-
-> Framework-agnostic markdown editor with a live overlay preview, zero runtime dependencies, and batteries-included formatting actions.
+<div align="center">
+  
+  <h1>🧁 Marzipan</h1>
+  <img src="public/logo.png" alt="Marzipan Logo" width="275"/>
+  <p><em>Framework-agnostic markdown editor with a live overlay preview, zero runtime dependencies, and batteries-included formatting actions.</em></p>
+</div>
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](CHANGELOG.md)
