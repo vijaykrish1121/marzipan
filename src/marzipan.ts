@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * Marzipan - A lightweight markdown editor and viewer
- * @version 1.0.6
+ * @version 1.0.7
  * @license Apache-2.0
  */
 

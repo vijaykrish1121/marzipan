@@ -1,0 +1,20 @@
+name = "marzipan-bakeshop"
+compatibility_date = "2023-01-01"
+
+# Pages settings
+pages_build_output_dir = "dist"
+
+# Environment variables that can be accessed at build time
+[vars]
+VITE_APP_ENV = "production"
+
+# Production environment
+[env.production.vars]
+VITE_APP_ENV = "production"
+
+# Preview environment for Pages
+[env.preview.vars]
+VITE_APP_ENV = "development"
+
+# Secrets
+[env.production.secrets]

@@ -6,7 +6,7 @@
 </div>
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0-brightgreen.svg)](CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.7-brightgreen.svg)](CHANGELOG.md)
 [![Docs](https://img.shields.io/badge/docs-marzipan.pinkpixel.dev-ff6fb7.svg)](https://marzipan.pinkpixel.dev)
 
 ## ✨ Highlights

@@ -3,7 +3,7 @@
 ## ✨ Project Snapshot
 
 - **Package:** `@pinkpixel/marzipan`
-- **Version:** 1.0.6 (Production Ready)
+- **Version:** 1.0.7 (Production Ready)
 - **Runtime dependencies:** **Zero** – Pure TypeScript with all markdown actions bundled internally
 - **Plugins:** First-party plugins published from `src/plugins` as tree-shakeable modules (`@pinkpixel/marzipan/plugins/*`)
 - **Demo:** `bakeshop-demo/` - Full-featured React playground demonstrating all capabilities

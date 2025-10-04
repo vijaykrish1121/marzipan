@@ -41,4 +41,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/pinkpixel-dev/marzipan/compare/v1.0.7...HEAD
 [1.0.7]: https://github.com/pinkpixel-dev/marzipan/compare/v1.0.6...v1.0.7
-[1.0.6]: https://github.com/pinkpixel-dev/marzipan/releases/tag/v1.0.6
+[1.0.7]: https://github.com/pinkpixel-dev/marzipan/releases/tag/v1.0.7
