@@ -56,6 +56,15 @@ export type ChangeHandler = (value: string, instance: Marzipan) => void;
 
 export type KeydownHandler = (event: KeyboardEvent, instance: Marzipan) => void;
 
+export interface ToolbarButtonConfig {
+  name?: string;
+  icon?: string;
+  title?: string;
+  action?: string;
+  separator?: boolean;
+  hasDropdown?: boolean;
+}
+
 export type ToolbarButtonShortcut =
   | 'bold'
   | 'italic'
@@ -75,6 +84,8 @@ export type ToolbarButtonShortcut =
   | 'divider';
 
 export type ToolbarButtonOption = ToolbarButtonConfig | ToolbarButtonShortcut;
+
+export type ToolbarButton = ToolbarButtonOption;
 
 export interface ToolbarConfig {
   buttons: ToolbarButtonOption[];
