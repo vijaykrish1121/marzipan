@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "@pinkpixel/marzipan-bakeshop",
+  "version": "1.0.0",
+  "description": "Marzipan examples showcasing various features and integrations",
+  "license": "Apache-2.0",
+  "type": "module",
+  "author": "Pink Pixel",
+  "email": "admin@pinkpixel.dev",
+  "homepage": "https://marzipan.pinkpixel.dev",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pinkpixel-dev/marzipan.git"
+  },
+  "issues": "https://github.com/pinkpixel-dev/marzipan/issues",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "dist/**",
+    "src/**",
+    "index.html",
+    "README.md"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build",
+    "prepack": "npm run build"
+  },
+  "keywords": [
+    "marzipan",
+    "markdown",
+    "demo",
+    "editor",
+    "typescript",
+    "library",
+    "plugins",
+    "examples"
+  ],
+  "dependencies": {
+    "@pinkpixel/marzipan-core": "file:..",
+    "@types/react-dom": "^19.1.9",
+    "mermaid": "^11.12.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.14",
+    "@typescript-eslint/eslint-plugin": "8.44.1",
+    "@typescript-eslint/parser": "8.44.1",
+    "@vitejs/plugin-react-swc": "^4.1.0",
+    "eslint": "^9.36.0",
+    "globals": "16.4.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.44.1",
+    "vite": "^7.1.7"
+  }
+}

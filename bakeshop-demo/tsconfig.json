@@ -1,0 +1,36 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@pinkpixel/marzipan-core": [
+        "../src"
+      ],
+      "@pinkpixel/marzipan-core/*": [
+        "../src/*"
+      ],
+      "@pinkpixel/marzipan-core/plugins/*": [
+        "../src/plugins/*"
+      ]
+    },
+    "moduleResolution": "node"
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ],
+  "files": [
+    "./src/utils/permalink.ts",
+    "./src/utils/styleRegistry.ts",
+    "./src/App.tsx",
+    "./src/main.tsx",
+    "./src/components/MarzipanCanvas.tsx",
+    "./src/demos/ChefTable.tsx",
+    "./src/demos/ThemeLab.tsx",
+    "./src/demos/PluginShowcase.tsx",
+    "./src/demos/ReactKitchen.tsx",
+    "../src/types/mermaid.d.ts"
+  ]
+}
