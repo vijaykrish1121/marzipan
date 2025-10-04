@@ -82,6 +82,10 @@ class Marzipan {
       this.options = this._mergeOptions(options);
       this.instanceId = ++Marzipan.instanceCount;
       this.initialized = false;
+      this._autoResizeInputHandler = null;
+      this._autoResizeResizeHandler = null;
+      this._minAutoHeight = null;
+      this._maxAutoHeight = null;
 
       // Inject styles if needed
       Marzipan.injectStyles();
@@ -250,7 +254,11 @@ class Marzipan {
         wrapper.parentNode.insertBefore(this.container, wrapper);
         this.container.appendChild(wrapper);
       }
-      
+
+      if (this.container) {
+        this.container.setAttribute('data-marzipan-instance', String(this.instanceId));
+      }
+
       if (!this.wrapper) {
         // No valid structure found
         if (container) container.remove();
@@ -334,6 +342,7 @@ class Marzipan {
       // Create container that will hold toolbar and editor
       this.container = document.createElement('div');
       this.container.className = 'marzipan-container';
+      this.container.setAttribute('data-marzipan-instance', String(this.instanceId));
       
       // Set theme on container - use instance theme if provided
       const themeToUse = this.instanceTheme || Marzipan.currentTheme || solar;
@@ -448,12 +457,9 @@ class Marzipan {
       
       // Setup or remove auto-resize
       if (this.options.autoResize) {
-        if (!this.container.classList.contains('marzipan-auto-resize')) {
-          this._setupAutoResize();
-        }
+        this._setupAutoResize();
       } else {
-        // Ensure auto-resize class is removed
-        this.container.classList.remove('marzipan-auto-resize');
+        this._teardownAutoResize();
       }
 
       // Update preview with initial content
@@ -920,22 +926,61 @@ class Marzipan {
      * @private
      */
     _setupAutoResize() {
-      // Add auto-resize class for styling
+      if (!this.container || !this.textarea || !this.preview || !this.wrapper) {
+        return;
+      }
+
+      this._teardownAutoResize();
+
       this.container.classList.add('marzipan-auto-resize');
-      
-      // Store previous height for comparison
       this.previousHeight = null;
-      
-      // Initial height update
+      this._refreshAutoResizeConstraints();
+
+      this._autoResizeInputHandler = () => this._updateAutoHeight();
+      this.textarea.addEventListener('input', this._autoResizeInputHandler);
+
+      if (typeof window !== 'undefined') {
+        this._autoResizeResizeHandler = () => this._updateAutoHeight();
+        window.addEventListener('resize', this._autoResizeResizeHandler);
+      } else {
+        this._autoResizeResizeHandler = null;
+      }
+
       this._updateAutoHeight();
-      
-      // Listen for input events
-      this.textarea.addEventListener('input', () => this._updateAutoHeight());
-      
-      // Listen for window resize
-      window.addEventListener('resize', () => this._updateAutoHeight());
     }
-    
+
+    _teardownAutoResize() {
+      if (this.container) {
+        this.container.classList.remove('marzipan-auto-resize');
+      }
+
+      if (this._autoResizeInputHandler && this.textarea) {
+        this.textarea.removeEventListener('input', this._autoResizeInputHandler);
+      }
+      this._autoResizeInputHandler = null;
+
+      if (this._autoResizeResizeHandler && typeof window !== 'undefined') {
+        window.removeEventListener('resize', this._autoResizeResizeHandler);
+      }
+      this._autoResizeResizeHandler = null;
+
+      if (this.textarea) {
+        this.textarea.style.removeProperty('height');
+        this.textarea.style.removeProperty('overflow-y');
+      }
+      if (this.preview) {
+        this.preview.style.removeProperty('height');
+        this.preview.style.removeProperty('overflow-y');
+      }
+      if (this.wrapper) {
+        this.wrapper.style.removeProperty('height');
+      }
+
+      this.previousHeight = null;
+      this._minAutoHeight = null;
+      this._maxAutoHeight = null;
+    }
+
     /**
      * Update height based on scrollHeight
      * @private
@@ -947,11 +992,6 @@ class Marzipan {
       const preview = this.preview;
       const wrapper = this.wrapper;
       
-      // Get computed styles
-      const computed = window.getComputedStyle(textarea);
-      const paddingTop = parseFloat(computed.paddingTop);
-      const paddingBottom = parseFloat(computed.paddingBottom);
-      
       // Store scroll positions
       const scrollTop = textarea.scrollTop;
       
@@ -961,20 +1001,16 @@ class Marzipan {
       // Calculate new height based on scrollHeight
       let newHeight = textarea.scrollHeight;
       
-      // Apply min height constraint
-      if (this.options.minHeight) {
-        const minHeight = parseInt(this.options.minHeight);
+      let overflow = 'hidden';
+      const minHeight = this._minAutoHeight;
+      if (typeof minHeight === 'number' && minHeight > 0) {
         newHeight = Math.max(newHeight, minHeight);
       }
-      
-      // Apply max height constraint
-      let overflow = 'hidden';
-      if (this.options.maxHeight) {
-        const maxHeight = parseInt(this.options.maxHeight);
-        if (newHeight > maxHeight) {
-          newHeight = maxHeight;
-          overflow = 'auto';
-        }
+
+      const maxHeight = this._maxAutoHeight;
+      if (typeof maxHeight === 'number' && maxHeight > 0 && newHeight > maxHeight) {
+        newHeight = maxHeight;
+        overflow = 'auto';
       }
       
       // Apply the new height to all elements with !important to override base styles
@@ -996,6 +1032,50 @@ class Marzipan {
         this.previousHeight = newHeight;
         // Could dispatch a custom event here if needed
       }
+    }
+
+    _refreshAutoResizeConstraints() {
+      this._minAutoHeight = this._resolveSizeToPixels(this.options.minHeight);
+      this._maxAutoHeight = this._resolveSizeToPixels(this.options.maxHeight);
+    }
+
+    _resolveSizeToPixels(value) {
+      if (value == null || value === '') {
+        return null;
+      }
+
+      if (typeof value === 'number') {
+        return value > 0 ? value : null;
+      }
+
+      const trimmed = String(value).trim();
+      if (!trimmed) {
+        return null;
+      }
+
+      const numeric = Number(trimmed);
+      if (Number.isFinite(numeric) && numeric > 0) {
+        return numeric;
+      }
+
+      if (typeof document === 'undefined' || !document.body) {
+        return null;
+      }
+
+      const probe = document.createElement('div');
+      probe.style.position = 'absolute';
+      probe.style.visibility = 'hidden';
+      probe.style.height = trimmed;
+      probe.style.pointerEvents = 'none';
+      document.body.appendChild(probe);
+      const pixels = probe.getBoundingClientRect().height;
+      probe.remove();
+
+      if (!Number.isFinite(pixels) || pixels <= 0) {
+        return null;
+      }
+
+      return pixels;
     }
     
     /**
@@ -1070,6 +1150,18 @@ class Marzipan {
       this.element.MarzipanInstance = null;
       Marzipan.instances.delete(this.element);
 
+      this._teardownAutoResize();
+
+      if (this.linkTooltip) {
+        this.linkTooltip.destroy();
+        this.linkTooltip = null;
+      }
+
+      if (this.toolbar) {
+        this.toolbar.destroy();
+        this.toolbar = null;
+      }
+
       // Cleanup shortcuts
       if (this.shortcuts) {
         this.shortcuts.destroy();
@@ -1082,6 +1174,10 @@ class Marzipan {
         
         // Restore original content
         this.element.textContent = content;
+      }
+
+      if (this.container) {
+        this.container.removeAttribute('data-marzipan-instance');
       }
 
       this.initialized = false;

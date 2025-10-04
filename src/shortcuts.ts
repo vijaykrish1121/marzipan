@@ -10,8 +10,11 @@ const keyActionMap: Record<string, string> = {
   b: 'toggleBold',
   i: 'toggleItalic',
   k: 'insertLink',
-  '7': 'toggleNumberedList',
-  '8': 'toggleBulletList',
+};
+
+const codeActionMap: Record<string, string> = {
+  Digit7: 'toggleNumberedList',
+  Digit8: 'toggleBulletList',
 };
 
 export class ShortcutsManager {
@@ -31,15 +34,16 @@ export class ShortcutsManager {
     if (!modKey) return false;
 
     const key = event.key.toLowerCase();
-    const action = keyActionMap[key];
+    const codeAction = codeActionMap[event.code];
+    const action = codeAction ?? keyActionMap[key];
 
     if (!action) return false;
 
-    if ((key === '7' || key === '8') && !event.shiftKey) {
+    if (codeAction && !event.shiftKey) {
       return false;
     }
 
-    if ((key === 'b' || key === 'i' || key === 'k') && event.shiftKey) {
+    if (!codeAction && (key === 'b' || key === 'i' || key === 'k') && event.shiftKey) {
       return false;
     }
 

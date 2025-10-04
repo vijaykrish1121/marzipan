@@ -1,6 +1,8 @@
 // plugins/tableGridPlugin.ts
 // Zero-dep "grid popover" table inserter (like Notion). GFM markdown output.
 
+import { buildTableMarkdown } from './utils/table';
+
 type MzEditor = {
   container: HTMLElement;
   textarea: HTMLTextAreaElement;
@@ -9,19 +11,11 @@ type MzEditor = {
 
 function insertAtCursor(editor: MzEditor, text: string) {
   const ta = editor.textarea;
-  const s = ta.selectionStart ?? 0, e = ta.selectionEnd ?? 0;
+  const s = ta.selectionStart ?? 0;
+  const e = ta.selectionEnd ?? 0;
   ta.setRangeText(text, s, e, 'end');
   editor.updatePreview();
   ta.focus();
-}
-
-function buildTableMd(rows: number, cols: number): string {
-  const header = Array.from({ length: cols }, (_, i) => `Header ${i + 1}`).join(' | ');
-  const divider = Array.from({ length: cols }, () => '---').join(' | ');
-  const body = Array.from({ length: rows }, () =>
-    Array.from({ length: cols }, () => ' ').join(' | ')
-  ).map(r => `| ${r} |`).join('\n');
-  return `| ${header} |\n| ${divider} |\n${body}\n`;
 }
 
 export function tableGridPlugin(opts?: {
@@ -90,7 +84,7 @@ export function tableGridPlugin(opts?: {
             });
           };
           cell.onclick = () => {
-            insertAtCursor(editor, `\n${buildTableMd(r, c)}\n`);
+            insertAtCursor(editor, `\n${buildTableMarkdown(r, c)}\n`);
             closePop();
           };
           grid.appendChild(cell);

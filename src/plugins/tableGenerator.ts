@@ -1,9 +1,12 @@
 // plugins/tableGenerator.ts
 // Quick GFM table inserter.
 
+import { buildTableMarkdown, resolvePositiveInteger } from './utils/table';
+
 function insertAtCursor(editor: any, text: string) {
   const ta = editor.textarea as HTMLTextAreaElement;
-  const s = ta.selectionStart ?? 0, e = ta.selectionEnd ?? 0;
+  const s = ta.selectionStart ?? 0;
+  const e = ta.selectionEnd ?? 0;
   ta.setRangeText(text, s, e, 'end');
   editor.updatePreview?.();
   ta.focus();
@@ -21,16 +24,13 @@ export function tableGeneratorPlugin() {
     btn.textContent = '▦';
 
     btn.onclick = () => {
-      const r = Math.max(1, parseInt(prompt('Rows (excluding header)?') || '2', 10));
-      const c = Math.max(1, parseInt(prompt('Columns?') || '2', 10));
+      const rowInput = resolvePositiveInteger(prompt('Rows (excluding header)?'), 2);
+      if (rowInput === null) return;
 
-      const header = Array.from({ length: c }, (_, i) => `Header ${i + 1}`).join(' | ');
-      const divider = Array.from({ length: c }, () => '---').join(' | ');
-      const body = Array.from({ length: r }, () =>
-        Array.from({ length: c }, () => ' ').join(' | ')
-      ).map(row => `| ${row} |`).join('\n');
+      const colInput = resolvePositiveInteger(prompt('Columns?'), 2);
+      if (colInput === null) return;
 
-      const md = `| ${header} |\n| ${divider} |\n${body}\n`;
+      const md = buildTableMarkdown(rowInput, colInput);
       insertAtCursor(editor, `\n${md}\n`);
     };
 

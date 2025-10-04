@@ -47,9 +47,13 @@ export function getActiveFormats(textarea: HTMLTextAreaElement | null): string[]
     formats.push('quote');
   }
 
-  if (currentLine.startsWith('# ')) formats.push('header');
-  if (currentLine.startsWith('## ')) formats.push('header-2');
-  if (currentLine.startsWith('### ')) formats.push('header-3');
+  if (currentLine.startsWith('### ')) {
+    formats.push('header-3');
+  } else if (currentLine.startsWith('## ')) {
+    formats.push('header-2');
+  } else if (currentLine.startsWith('# ')) {
+    formats.push('header');
+  }
 
   const lookBehind = Math.max(0, selectionStart - 10);
   const lookAhead = Math.min(value.length, selectionEnd + 10);
