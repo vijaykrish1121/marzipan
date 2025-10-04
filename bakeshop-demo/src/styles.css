@@ -1,386 +1,137 @@
-:root {
-  color-scheme: light dark;
-  --bakeshop-bg: #10131a;
-  --bakeshop-panel: rgba(17, 22, 31, 0.85);
-  --bakeshop-border: rgba(255, 255, 255, 0.08);
-  --bakeshop-text: #f7f9fc;
-  --bakeshop-subtle: rgba(247, 249, 252, 0.65);
-  --bakeshop-accent: linear-gradient(120deg, #ff6f61 0%, #ff8c69 45%, #ffd47b 100%);
-  --bakeshop-accent-solid: #ff8c69;
-  --bakeshop-font: 'Inter', 'SF Pro Display', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #1b1b1f;
+    color: #e5e7eb;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
 }
 
-* {
-  box-sizing: border-box;
+@layer components {
+  .gradient-text {
+    background: linear-gradient(to right, #db2777, #ec4899, #9333ea);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .card {
+    border-radius: 1rem;
+    background-color: rgba(30, 31, 36, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: 0 20px 45px -20px rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(8px);
+  }
+
+  .tab-button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+  }
+
+  .tab-button-active {
+    background: linear-gradient(to right, #ec4899, #db2777);
+    color: white;
+    box-shadow: 0 15px 35px -15px rgba(236, 72, 153, 0.6);
+  }
+
+  .tab-button-inactive {
+    background-color: rgba(148, 163, 184, 0.08);
+    color: rgba(226, 232, 240, 0.9);
+    border-color: rgba(148, 163, 184, 0.14);
+  }
+
+  .tab-button-inactive:hover {
+    background-color: rgba(236, 72, 153, 0.1);
+    color: #fbcfe8;
+    border-color: rgba(236, 72, 153, 0.35);
+  }
+
+  .action-button {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    background-color: rgba(148, 163, 184, 0.08);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    color: #f8fafc;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .action-button:hover {
+    border-color: rgba(236, 72, 153, 0.5);
+    background-color: rgba(236, 72, 153, 0.12);
+    color: #fbcfe8;
+  }
+
+  .action-button:active {
+    transform: scale(0.95);
+  }
+
+  .code-block {
+    background-color: #111827;
+    color: #f3f4f6;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.875rem;
+    overflow-x: auto;
+  }
 }
 
-body {
-  margin: 0;
-  font-family: var(--bakeshop-font);
-  background: radial-gradient(circle at 20% -10%, #1f2636 0%, var(--bakeshop-bg) 45%),
-    radial-gradient(circle at 80% 0%, #322746 0%, #141823 55%);
-  color: var(--bakeshop-text);
-  min-height: 100vh;
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
 }
 
-a {
-  color: inherit;
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
-button {
-  font-family: inherit;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
 }
 
-.bakeshop-shell {
-  display: grid;
-  grid-template-columns: 320px minmax(0, 1fr);
-  min-height: 100vh;
+::-webkit-scrollbar-track {
+  background-color: rgba(30, 31, 36, 0.8);
 }
 
-.bakeshop-sidebar {
-  padding: 48px 32px;
-  border-right: 1px solid var(--bakeshop-border);
-  backdrop-filter: blur(18px);
-  background: rgba(8, 10, 18, 0.7);
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  position: sticky;
-  top: 0;
-  align-self: start;
-  height: 100vh;
+::-webkit-scrollbar-thumb {
+  background-color: rgba(236, 72, 153, 0.7);
+  border-radius: 9999px;
 }
 
-.bakeshop-brand {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(236, 72, 153, 0.95);
 }
 
-.bakeshop-brand h1 {
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-  background: var(--bakeshop-accent);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: 0.02em;
-}
-
-.bakeshop-tagline {
-  color: var(--bakeshop-subtle);
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 0.22em;
-}
-
-.bakeshop-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.bakeshop-nav-button {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 14px;
-  border: 1px solid transparent;
-  background: transparent;
-  color: var(--bakeshop-subtle);
-  font-size: 15px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 160ms ease;
-}
-
-.bakeshop-nav-button:hover {
-  border-color: rgba(255, 255, 255, 0.16);
-  color: var(--bakeshop-text);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.bakeshop-nav-button.is-active {
-  border-color: rgba(255, 255, 255, 0.28);
-  color: var(--bakeshop-text);
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 12px 30px rgba(255, 140, 105, 0.1);
-}
-
-.bakeshop-content {
-  padding: 48px 56px;
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-}
-
-.bakeshop-panel {
-  background: var(--bakeshop-panel);
-  border: 1px solid var(--bakeshop-border);
-  border-radius: 28px;
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-  box-shadow: 0 24px 60px rgba(6, 8, 14, 0.45);
-}
-
-.bakeshop-panel h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-}
-
-.bakeshop-panel h3 {
-  margin: 0;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.bakeshop-panel p {
-  margin: 0;
-  color: var(--bakeshop-subtle);
-}
-
-.bakeshop-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.bakeshop-chip {
-  border-radius: 12px;
-  padding: 8px 14px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--bakeshop-subtle);
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.bakeshop-toolbar {
-  display: flex;
-  gap: 14px;
-  flex-wrap: wrap;
-}
-
-.bakeshop-action {
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--bakeshop-text);
-  font-size: 14px;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
-}
-
-.bakeshop-action:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 28px rgba(255, 140, 105, 0.2);
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.bakeshop-action.is-active {
-  background: var(--bakeshop-accent-solid);
-  border-color: transparent;
-  color: #0d101a;
-}
-
-.bakeshop-toolbar button {
-  padding: 10px 16px;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--bakeshop-text);
-  font-size: 14px;
-  letter-spacing: 0.01em;
-  cursor: pointer;
-  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
-}
-
-.bakeshop-toolbar button:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(255, 140, 105, 0.18);
-  background: rgba(255, 255, 255, 0.12);
-}
-
-.bakeshop-toolbar button.is-active {
-  background: var(--bakeshop-accent-solid);
-  border-color: transparent;
-  color: #10131a;
-}
-
-.demo-grid {
-  display: grid;
-  gap: 24px;
-}
-
-.demo-grid.two-col {
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-}
-
-.demo-card {
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(13, 17, 26, 0.92);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.demo-card h4 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.demo-card p {
-  margin: 0;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.demo-preview {
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* Marzipan editor custom styling */
+.marzipan-container {
+  border-radius: 0.75rem;
   overflow: hidden;
-  background: rgba(6, 9, 14, 0.85);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
-.demo-preview .marzipan-container {
-  border-radius: 18px;
-  overflow: hidden;
-  border: none;
+.marzipan-toolbar {
+  background: linear-gradient(to right, #fdf2f8, #fffbeb);
+  border-bottom: 2px solid #fce7f3;
 }
 
-.demo-preview .marzipan-toolbar {
-  border-radius: 18px 18px 0 0;
-}
-
-.theme-palette {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-}
-
-.theme-palette button {
-  border-radius: 18px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 16px;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  transition: transform 140ms ease, border 140ms ease;
-}
-
-.theme-palette button:hover {
-  transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.28);
-}
-
-.theme-palette button.is-active {
-  border-color: rgba(255, 255, 255, 0.45);
-  box-shadow: 0 18px 40px rgba(255, 140, 105, 0.24);
-}
-
-.theme-token-strip {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-}
-
-.theme-token {
-  border-radius: 12px;
-  height: 22px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-.code-block {
-  border-radius: 16px;
-  background: rgba(0, 0, 0, 0.38);
-  padding: 18px;
-  font-family: 'JetBrains Mono', 'Fira Code', 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-  font-size: 13px;
-  line-height: 1.45;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.info-banner {
-  border-radius: 18px;
-  padding: 18px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  background: rgba(255, 140, 105, 0.12);
-  color: rgba(255, 255, 255, 0.88);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.info-banner strong {
-  font-weight: 600;
-}
-
-.bakeshop-footer {
-  margin-top: auto;
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 12px;
-}
-
-.permalink-input {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.permalink-input input {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 12px;
-  padding: 10px 14px;
-  color: var(--bakeshop-text);
-  font-family: 'JetBrains Mono', ui-monospace;
-  font-size: 13px;
-}
-
-.permalink-input button {
-  padding: 10px 18px;
-  border-radius: 12px;
-  border: none;
-  background: var(--bakeshop-accent);
-  color: #11131d;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-@media (max-width: 1080px) {
-  .bakeshop-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .bakeshop-sidebar {
-    position: relative;
-    height: auto;
-  }
-}
-
-@media (max-width: 720px) {
-  .bakeshop-content {
-    padding: 32px 20px 80px;
-  }
-
-  .bakeshop-panel {
-    border-radius: 22px;
-    padding: 24px;
-  }
+.marzipan-stats-bar {
+  background: linear-gradient(to right, #fffbeb, #fdf2f8);
+  border-top: 2px solid #fce7f3;
 }

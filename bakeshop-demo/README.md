@@ -1,51 +1,205 @@
-# ✨ Marzipan Bakeshop
+# 🧁 Marzipan Bakeshop Demo
 
-The **Marzipan Bakeshop** is our official tasting room for `@pinkpixel/marzipan`. It runs on Vite + React + TypeScript and showcases every core feature, bundled action, and plugin so you can try before you wire it into your own app.
+An interactive, comprehensive demo application showcasing all features of the **Marzipan** markdown editor library.
 
-![Marzipan Bakeshop UI](../image.png)
+## ✨ What's Inside?
 
-## 🚀 Quick Start
+This beautifully designed demo app provides:
+
+### 📑 Five Interactive Tabs
+
+1. **🎨 Playground** - Full-featured editor with all capabilities enabled
+   - Live markdown preview with overlay rendering
+   - Complete toolbar with formatting buttons
+   - Stats bar showing character/word/line counts
+   - Auto-save to localStorage
+   - HTML export functionality
+   - Sample content demonstrating all markdown features
+
+2. **⚡ Actions Demo** - Interactive showcase of all formatting actions
+   - Visual button grid for each action
+   - Live demonstration of markdown transformations
+   - Keyboard shortcut hints
+   - Code examples for integration
+
+3. **🧩 Plugins Gallery** - Comprehensive plugin documentation
+   - All available plugins with descriptions
+   - Import paths and usage examples
+   - Configuration options
+
+4. **🎭 Themes Lab** - Theme comparison and customization
+   - Side-by-side Solar (light) and Cave (dark) themes
+   - Live theme switching
+   - Custom theme creation examples
+
+5. **💻 API Examples** - Complete integration guide
+   - Basic setup examples
+   - React integration patterns
+   - Event handling
+   - Multiple editor management
+   - Export functionality
+
+### 🎨 Modern Design
+
+- **Tailwind CSS 4.x** with custom gradient designs
+- **Responsive layout** that works beautifully on all devices
+- **Smooth animations** and transitions
+- **Pink Pixel branding** with warm, inviting colors
+- **Dark mode support** via Cave theme
+- **Custom scrollbars** and polished UI elements
+
+### 🚀 Developer-Friendly
+
+- **TypeScript** for type safety
+- **Vite** for lightning-fast development
+- **React 18** with modern hooks
+- **Copy-ready code examples** throughout
+- **URL hash navigation** for direct linking to sections
+
+## 🏃 Quick Start
+
+### Prerequisites
+
+- Node.js 20 or higher
+- npm or equivalent package manager
+
+### Installation
+
 ```bash
-cd bakeshop-demo
+# From the bakeshop-demo directory
 npm install
+```
+
+### Development
+
+```bash
+# Start the dev server
 npm run dev
 ```
-Visit `http://localhost:5173` to explore the playground. Production bundles land in `bakeshop-demo/dist` via `npm run build`.
 
-## 🧁 Panels & Highlights
-| Panel | What you’ll find |
-|-------|------------------|
-| 👩‍🍳 **Chef’s Table** | Core editor demo with toolbar presets, view modes, stats HUD, and direct access to bundled actions. |
-| 🎨 **Theme Lab** | Accent swatch plugin, theme merges, and CSS variable inspectors for Solar, Cave, and custom palettes. |
-| 🧰 **Plugin Gallery** | Every plugin published under `@pinkpixel/marzipan/plugins/*` (tables, Mermaid, image helpers, tinyHighlight, accent swatches). |
-| ⚛️ **React Kitchen** | Reference integration demonstrating controlled state, value mirroring, and logging hooked into the action suite. |
+Visit `http://localhost:5173` to explore the demo!
 
-## 🔌 Plugin Coverage
-The gallery mounts all first-party plugins:
-- `tinyHighlight`
-- `tablePlugin`, `tableGridPlugin`, `tableGenerator`
-- `accentSwatchPlugin`
-- `imageManagerPlugin`, `imagePickerPlugin`, `imagePicker`
-- `mermaidPlugin` (ESM) & `mermaidExternal` (CDN)
+### Building
 
-Use the panel toggles to inspect options and copy starter code.
+```bash
+# Build for production
+npm run build
 
-## 🔄 Permalinks & State
-- URL params persist panel selection, theme, accent, toolbar preset, and plugin focus (e.g. `?panel=plugin-gallery&theme=cave&accent=f6ae2d`).
-- Click **Copy URL** in the footer to share reproducible setups with teammates.
+# Preview production build
+npm run preview
+```
 
-## 🛠️ Scripts
-| Command | Purpose |
-|---------|---------|
-| `npm run dev` | Launch the Vite dev server. |
-| `npm run build` | Type-check (`tsc -b`) then build the production bundle. |
-| `npm run preview` | Preview the production build locally. |
-| `npm run typecheck` | Strict TypeScript validation. |
-| `npm run lint` | ESLint flat config for the playground. |
-| `npm run format` | Prettier formatting. |
+## 📁 Project Structure
 
-## 🧭 Legacy Examples
-Earlier single-file demos (`basic.ts`, `with-plugins.ts`, `theming.ts`, `react-integration.tsx`) now live in `bakeshop-demo/legacy/` for reference. The playground replaces them with a cohesive experience.
+```
+bakeshop-demo/
+├── src/
+│   ├── tabs/              # Individual tab components
+│   │   ├── Playground.tsx
+│   │   ├── ActionsDemo.tsx
+│   │   ├── PluginsGallery.tsx
+│   │   ├── ThemesLab.tsx
+│   │   └── ApiExamples.tsx
+│   ├── App.tsx            # Main app with navigation
+│   ├── main.tsx           # Entry point
+│   └── styles.css         # Tailwind + custom styles
+├── index.html             # HTML template
+├── package.json
+├── vite.config.ts
+├── tailwind.config.js
+└── tsconfig.json
+```
 
-## ❤️ Credits
-Made with ❤️ by Pink Pixel. Share feedback via issues or discussions in the main repository.
+## 🎯 Features Demonstrated
+
+### Core Editor Features
+- ✅ Overlay markdown preview
+- ✅ Toolbar with formatting buttons
+- ✅ Keyboard shortcuts
+- ✅ Smart list continuation
+- ✅ Stats bar (character/word/line counts)
+- ✅ View modes (Normal, Plain, Preview)
+- ✅ Auto-resize
+- ✅ Custom placeholders
+
+### Formatting Actions
+- Bold, Italic, Code, Strikethrough
+- Headings (H1, H2, H3)
+- Bullet lists, Numbered lists, Task lists
+- Blockquotes
+- Links
+- Horizontal rules
+
+### Themes
+- Solar (light theme)
+- Cave (dark theme)
+- Custom theme creation
+
+### Integration Patterns
+- Single editor initialization
+- Multiple editor management
+- React component integration
+- Event handling (onChange, onKeydown)
+- Content get/set operations
+- HTML export
+
+### Advanced Features
+- Plugin system architecture
+- Custom stats formatting
+- Theme switching
+- Instance management
+- Auto-save implementation
+
+## 💡 Usage Tips
+
+1. **Navigation** - Use the tab buttons or URL hash (#playground, #actions, etc.)
+2. **Direct Links** - Share specific sections via URL hash
+3. **Mobile** - Fully responsive, works great on phones/tablets
+4. **Code Examples** - All code blocks are copy-ready
+5. **Persistence** - Playground content auto-saves to localStorage
+
+## 🛠️ Development Scripts
+
+| Script | Purpose |
+|--------|---------|
+| `npm run dev` | Start development server with HMR |
+| `npm run build` | Build for production |
+| `npm run preview` | Preview production build |
+| `npm run lint` | Run ESLint |
+| `npm run typecheck` | Run TypeScript checks |
+
+## 🎨 Customization
+
+The demo uses Tailwind CSS 4.x with custom configuration. Key customization points:
+
+- **Colors** - Defined in `tailwind.config.js`
+- **Animations** - Custom keyframes for gradients and floating
+- **Components** - Reusable Tailwind classes in `styles.css`
+- **Theme** - Marzipan theme integration
+
+## 📚 Learning Resources
+
+After exploring the demo:
+
+1. Check the [Marzipan API Documentation](../docs/api.md)
+2. Review [Plugin Documentation](../docs/plugins.md)
+3. Read the [Quick Start Guide](../docs/quick-start.md)
+4. Explore the [Main Repository](https://github.com/pinkpixel-dev/marzipan)
+
+## 🤝 Contributing
+
+Found a bug or want to improve the demo? Contributions are welcome!
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## 📄 License
+
+This demo application is part of the Marzipan project and is licensed under Apache 2.0.
+
+---
+
+**Made with ❤️ by [Pink Pixel](https://pinkpixel.dev)**  
+✨ *Dream it, Pixel it™*

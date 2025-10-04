@@ -1,17 +1,22 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
-import path from 'node:path';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { resolve } from 'path'
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@pinkpixel/marzipan-core': path.resolve(__dirname, '../src'),
-      '@pinkpixel/marzipan-core/plugins': path.resolve(__dirname, '../src/plugins')
-    }
+      '@': resolve(__dirname, './src'),
+      '@pinkpixel/marzipan': resolve(__dirname, '../dist/index.js'),
+    },
+  },
+  server: {
+    port: 5173,
+    open: true,
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
-  }
-});
+    sourcemap: true,
+  },
+})

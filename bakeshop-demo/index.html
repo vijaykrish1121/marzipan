@@ -1,27 +1,17 @@
-  
 <!doctype html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Marzipan Bakeshop</title>
-    <meta name="description" content="Tasting menu for every @pinkpixel/marzipan-core feature" />
-    <meta name="author" content="Pink Pixel" />
-    <meta name="keywords" content="markdown, editor, viewer, lightweight, marzipan, examples, plugins" />
-    
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Interactive demo showcasing all Marzipan markdown editor features" />
+    <title>🧁 Marzipan Bakeshop - Interactive Demo</title>
     
-    <!-- Mermaid CDN for external plugin demo -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
-    <script>
-      if (window.mermaid) {
-        mermaid.initialize({ startOnLoad: false });
-      }
-    </script>
-
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
   </head>
-  
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>

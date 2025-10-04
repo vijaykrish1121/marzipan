@@ -1,13 +1,30 @@
 import { defineConfig } from 'vite'
 import path from 'path'
+import fs from 'fs'
+
+const pluginFiles = fs.readdirSync('src/plugins').filter(f => f.endsWith('.ts'))
+const pluginEntries = Object.fromEntries(
+  pluginFiles.map(file => [
+    `plugins/${file.replace('.ts', '')}`,
+    path.resolve(__dirname, `src/plugins/${file}`)
+  ])
+)
 
 export default defineConfig({
   build: {
+    emptyOutDir: false, // Don't clear dist folder to preserve TypeScript declarations
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
-      name: 'Marzipan',
-      fileName: (format) => `index.${format === 'es' ? 'js' : format}`,
+      entry: {
+        index: path.resolve(__dirname, 'src/index.ts'),
+        ...pluginEntries
+      },
       formats: ['es']
+    },
+    rollupOptions: {
+      output: {
+        entryFileNames: '[name].js',
+        preserveModules: false
+      }
     },
     sourcemap: true,
     target: 'es2020'

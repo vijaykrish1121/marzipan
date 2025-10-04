@@ -1,36 +1,31 @@
 {
-  "extends": "../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
     "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+
+    /* Path mapping */
     "baseUrl": ".",
     "paths": {
-      "@pinkpixel/marzipan-core": [
-        "../src"
-      ],
-      "@pinkpixel/marzipan-core/*": [
-        "../src/*"
-      ],
-      "@pinkpixel/marzipan-core/plugins/*": [
-        "../src/plugins/*"
-      ]
-    },
-    "moduleResolution": "node"
+      "@/*": ["./src/*"]
+    }
   },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "files": [
-    "./src/utils/permalink.ts",
-    "./src/utils/styleRegistry.ts",
-    "./src/App.tsx",
-    "./src/main.tsx",
-    "./src/components/MarzipanCanvas.tsx",
-    "./src/demos/ChefTable.tsx",
-    "./src/demos/ThemeLab.tsx",
-    "./src/demos/PluginShowcase.tsx",
-    "./src/demos/ReactKitchen.tsx",
-    "../src/types/mermaid.d.ts"
-  ]
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

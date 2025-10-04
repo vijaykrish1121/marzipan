@@ -1,157 +1,132 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useState, useEffect } from 'react'
+import Playground from './tabs/Playground'
+import ActionsDemo from './tabs/ActionsDemo'
+import PluginsGallery from './tabs/PluginsGallery'
+import ThemesLab from './tabs/ThemesLab'
+import ApiExamples from './tabs/ApiExamples'
 
-import ChefTable from './demos/ChefTable';
-import PluginShowcase from './demos/PluginShowcase';
-import ReactKitchen from './demos/ReactKitchen';
-import { ThemeLab, type ThemeRecipe } from './demos/ThemeLab';
-import { buildThemeRecipes } from './demos/themeRecipes';
-import {
-  readPermalink,
-  writePermalink,
-  type PanelId,
-  type PluginPanelId,
-  type ToolbarMode
-} from './utils/permalink';
+type Tab = 'playground' | 'actions' | 'plugins' | 'themes' | 'api'
 
-const PANELS: Array<{ id: PanelId; label: string; emoji: string; blurb: string }> = [
-  { id: 'chef-table', label: 'Chef’s Table', emoji: '👩‍🍳', blurb: 'Core editor controls' },
-  { id: 'theme-lab', label: 'Theme Lab', emoji: '🎨', blurb: 'Palettes & accents' },
-  { id: 'plugin-gallery', label: 'Plugin Gallery', emoji: '🧰', blurb: 'Every extension' },
-  { id: 'react-lab', label: 'React Kitchen', emoji: '⚛️', blurb: 'Framework wiring' }
-];
+const tabs = [
+  { id: 'playground' as Tab, label: '🎨 Playground', icon: '🎨' },
+  { id: 'actions' as Tab, label: '⚡ Actions', icon: '⚡' },
+  { id: 'plugins' as Tab, label: '🧩 Plugins', icon: '🧩' },
+  { id: 'themes' as Tab, label: '🎭 Themes', icon: '🎭' },
+  { id: 'api' as Tab, label: '💻 API', icon: '💻' },
+]
 
 export default function App() {
-  const recipes = useMemo<ThemeRecipe[]>(() => buildThemeRecipes(), []);
-  const initial = useMemo(() => readPermalink(), []);
+  const [activeTab, setActiveTab] = useState<Tab>('playground')
 
-  const [panel, setPanel] = useState<PanelId>(initial.panel ?? 'chef-table');
-  const [activeThemeId, setActiveThemeId] = useState<string>(initial.theme ?? recipes[0].id);
-  const [accent, setAccent] = useState<string>(() => {
-    if (initial.accent) return initial.accent;
-    return recipes.find((recipe) => recipe.id === (initial.theme ?? recipes[0].id))?.accent ?? '#ff8c69';
-  });
-  const [toolbarMode, setToolbarMode] = useState<ToolbarMode>(initial.toolbar ?? 'classic');
-  const [pluginView, setPluginView] = useState<PluginPanelId>(initial.plugin ?? 'highlight');
-  const [permalink, setPermalink] = useState('');
-  const [copyHint, setCopyHint] = useState<'idle' | 'copied'>('idle');
-
-  const activeRecipe = useMemo(
-    () => recipes.find((recipe) => recipe.id === activeThemeId) ?? recipes[0],
-    [recipes, activeThemeId]
-  );
-  const liveAccent = accent || activeRecipe.accent;
-  const themeOption = activeRecipe.theme;
-  const usingDefaultAccent = liveAccent === activeRecipe.accent;
-
+  // Handle URL hash navigation
   useEffect(() => {
-    const url = writePermalink({
-      panel,
-      theme: activeThemeId,
-      accent: liveAccent,
-      plugin: pluginView,
-      toolbar: toolbarMode
-    });
-    setPermalink(url);
-  }, [panel, activeThemeId, liveAccent, pluginView, toolbarMode]);
-
-  useEffect(() => {
-    if (copyHint === 'copied') {
-      const timeout = setTimeout(() => setCopyHint('idle'), 1800);
-      return () => clearTimeout(timeout);
+    const hash = window.location.hash.slice(1) as Tab
+    if (tabs.some(t => t.id === hash)) {
+      setActiveTab(hash)
     }
-    return undefined;
-  }, [copyHint]);
 
-  const handleCopyPermalink = async () => {
-    try {
-      await navigator.clipboard.writeText(permalink);
-      setCopyHint('copied');
-    } catch (error) {
-      console.warn('Clipboard copy unavailable', error);
+    const handleHashChange = () => {
+      const newHash = window.location.hash.slice(1) as Tab
+      if (tabs.some(t => t.id === newHash)) {
+        setActiveTab(newHash)
+      }
     }
-  };
+
+    window.addEventListener('hashchange', handleHashChange)
+    return () => window.removeEventListener('hashchange', handleHashChange)
+  }, [])
+
+  const handleTabChange = (tab: Tab) => {
+    setActiveTab(tab)
+    window.location.hash = tab
+  }
 
   return (
-    <div className="bakeshop-shell">
-      <aside className="bakeshop-sidebar">
-        <div className="bakeshop-brand">
-          <h1>Marzipan Bakeshop</h1>
-          <span className="bakeshop-tagline">Dream it, Pixel it</span>
-          <p className="bakeshop-chip">Playground for @pinkpixel/marzipan-core ✨</p>
-        </div>
+    <div className="min-h-screen bg-[#1b1b1f] text-slate-100">
+      {/* Header */}
+      <header className="sticky top-0 z-50 backdrop-blur bg-[#16161a]/90 border-b border-[#2f2f36] shadow-lg">
+        <div className="container mx-auto px-4 py-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <img src="/logo.png" alt="Marzipan" className="w-16 h-16 animate-float" />
+              <div>
+                <h1 className="text-4xl font-bold gradient-text">
+                  Marzipan Bakeshop
+                </h1>
+                <p className="text-slate-300 text-sm mt-1">
+                  Interactive demo of the pure TypeScript markdown editor
+                </p>
+              </div>
+            </div>
 
-        <nav className="bakeshop-nav">
-          {PANELS.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={`bakeshop-nav-button ${panel === item.id ? 'is-active' : ''}`}
-              onClick={() => setPanel(item.id)}
-            >
-              <span>{item.emoji}</span>
-              <span>{item.label}</span>
-            </button>
-          ))}
-        </nav>
-
-        <div className="bakeshop-footer">
-          Made with ❤️ by Pink Pixel
-        </div>
-      </aside>
-
-      <main className="bakeshop-content">
-        {panel === 'chef-table' && (
-          <ChefTable
-            theme={themeOption}
-            accent={liveAccent}
-            toolbarMode={toolbarMode}
-            onToolbarModeChange={setToolbarMode}
-          />
-        )}
-
-        {panel === 'theme-lab' && (
-          <ThemeLab
-            recipes={recipes}
-            activeId={activeThemeId}
-            accent={liveAccent}
-            onSelect={(id: string) => {
-              setActiveThemeId(id);
-              const fallback = recipes.find((recipe) => recipe.id === id)?.accent;
-              if (fallback && usingDefaultAccent) {
-                setAccent(fallback);
-              }
-            }}
-            onAccentChange={setAccent}
-            theme={themeOption}
-          />
-        )}
-
-        {panel === 'plugin-gallery' && (
-          <PluginShowcase
-            theme={themeOption}
-            accent={liveAccent}
-            view={pluginView}
-            onViewChange={setPluginView}
-            onAccentChange={setAccent}
-          />
-        )}
-
-        {panel === 'react-lab' && <ReactKitchen theme={themeOption} accent={liveAccent} />}
-
-        <section className="bakeshop-panel">
-          <h3>Share this tasting flight</h3>
-          <p>
-            Permalinks capture panel, theme, accent, toolbar, and plugin selections. Pop this link to teammates and
-            they&apos;ll land on the same setup.
-          </p>
-          <div className="permalink-input">
-            <input value={permalink} readOnly aria-label="Marzipan Bakeshop permalink" />
-            <button type="button" onClick={handleCopyPermalink}>
-              {copyHint === 'copied' ? 'Copied! 🎉' : 'Copy URL'}
-            </button>
+            <div className="flex gap-3">
+              <a
+                href="https://marzipan.pinkpixel.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 rounded-xl border border-pink-500/60 bg-[#27272f] text-pink-200 font-semibold shadow-sm hover:bg-pink-500/10 hover:border-pink-400 hover:shadow-xl transition-all duration-300"
+              >
+                📚 Documentation
+              </a>
+              <a
+                href="https://github.com/pinkpixel-dev/marzipan"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-6 py-3 rounded-xl bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold shadow-sm hover:shadow-xl hover:scale-105 transition-all duration-300"
+              >
+                ⭐ Star on GitHub
+              </a>
+            </div>
           </div>
-        </section>
+
+          {/* Tab Navigation */}
+          <nav className="flex gap-2 overflow-x-auto pb-2">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => handleTabChange(tab.id)}
+                className={`tab-button ${
+                  activeTab === tab.id ? 'tab-button-active' : 'tab-button-inactive'
+                }`}
+              >
+                <span className="mr-2">{tab.icon}</span>
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="container mx-auto px-4 py-8">
+        <div className="animate-fade-in">
+          {activeTab === 'playground' && <Playground />}
+          {activeTab === 'actions' && <ActionsDemo />}
+          {activeTab === 'plugins' && <PluginsGallery />}
+          {activeTab === 'themes' && <ThemesLab />}
+          {activeTab === 'api' && <ApiExamples />}
+        </div>
       </main>
+
+      {/* Footer */}
+      <footer className="mt-20 py-8 border-t border-[#2f2f36] bg-[#16161a]">
+        <div className="container mx-auto px-4 text-center">
+          <p className="text-slate-300 mb-2">
+            Made with ❤️ by{' '}
+            <a
+              href="https://pinkpixel.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-pink-300 hover:text-pink-200 font-semibold"
+            >
+              Pink Pixel
+            </a>
+          </p>
+          <p className="text-slate-400 text-sm">
+            ✨ Dream it, Pixel it™
+          </p>
+        </div>
+      </footer>
     </div>
-  );
+  )
 }

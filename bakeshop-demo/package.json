@@ -1,66 +1,37 @@
 {
-  "$schema": "https://json.schemastore.org/package.json",
-  "name": "@pinkpixel/marzipan-bakeshop",
+  "name": "@pinkpixel/marzipan-bakeshop-demo",
   "version": "1.0.0",
-  "description": "Marzipan examples showcasing various features and integrations",
-  "license": "Apache-2.0",
+  "private": true,
+  "description": "Interactive demo showcasing all Marzipan editor features",
   "type": "module",
-  "author": "Pink Pixel",
-  "email": "admin@pinkpixel.dev",
-  "homepage": "https://marzipan.pinkpixel.dev",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pinkpixel-dev/marzipan.git"
-  },
-  "issues": "https://github.com/pinkpixel-dev/marzipan/issues",
-  "engines": {
-    "node": ">=20"
-  },
-  "files": [
-    "dist/**",
-    "src/**",
-    "index.html",
-    "README.md"
-  ],
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc && vite build",
     "preview": "vite preview",
-    "lint": "eslint . --ext .ts,.tsx",
-    "format": "prettier --check .",
-    "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build",
-    "prepack": "npm run build"
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "typecheck": "tsc --noEmit"
   },
-  "keywords": [
-    "marzipan",
-    "markdown",
-    "demo",
-    "editor",
-    "typescript",
-    "library",
-    "plugins",
-    "examples"
-  ],
   "dependencies": {
-    "@pinkpixel/marzipan-core": "file:..",
-    "@types/react-dom": "^19.1.9",
-    "mermaid": "^11.12.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "@pinkpixel/marzipan": "file:../",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "mermaid": "^11.4.1"
   },
   "devDependencies": {
-    "@eslint/js": "^9.36.0",
-    "@types/node": "^24.5.2",
-    "@types/react": "^19.1.14",
-    "@typescript-eslint/eslint-plugin": "8.44.1",
-    "@typescript-eslint/parser": "8.44.1",
-    "@vitejs/plugin-react-swc": "^4.1.0",
-    "eslint": "^9.36.0",
-    "globals": "16.4.0",
-    "prettier": "^3.6.2",
-    "typescript": "^5.9.2",
-    "typescript-eslint": "^8.44.1",
-    "vite": "^7.1.7"
+    "@tailwindcss/vite": "^4.0.0-alpha.37",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@typescript-eslint/eslint-plugin": "^8.45.0",
+    "@typescript-eslint/parser": "^8.45.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "eslint": "^9.37.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.16",
+    "tailwindcss": "^4.0.0-alpha.37",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.9"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }

@@ -3,26 +3,59 @@
 ## ✨ Project Snapshot
 
 - **Package:** `@pinkpixel/marzipan`
-- **Version:** 1.0.0
-- **Runtime dependencies:** _None_ – markdown actions are bundled in `src/actions`.
-- **Plugins:** Published from `src/plugins` as first-party helpers (`@pinkpixel/marzipan/plugins/*`).
-- **Demo:** `bakeshop-demo/` React playground showcasing every feature.
+- **Version:** 1.0.6 (Production Ready)
+- **Runtime dependencies:** **Zero** – Pure TypeScript with all markdown actions bundled internally
+- **Plugins:** First-party plugins published from `src/plugins` as tree-shakeable modules (`@pinkpixel/marzipan/plugins/*`)
+- **Demo:** `bakeshop-demo/` - Full-featured React playground demonstrating all capabilities
 - **License:** Apache 2.0 • **Homepage:** https://marzipan.pinkpixel.dev
+- **Repository:** https://github.com/pinkpixel-dev/marzipan
+- **Node.js:** 20+ required
 
 ## 🏗️ Repository Structure
 
 ```
 marzipan/
-├── src/                # Core editor source (TypeScript)
-│   ├── actions/        # Bundled formatting helpers
-│   └── plugins/        # First-party plugin implementations
-├── dist/               # Build output (gitignored)
-├── docs/               # Documentation portal
-├── bakeshop-demo/      # Vite + React playground
-├── CHANGELOG.md        # Release notes
-├── CONTRIBUTING.md     # Contribution workflow
-├── OVERVIEW.md         # This document
-└── README.md           # Project introduction
+├── src/                      # Core editor source (TypeScript)
+│   ├── actions/              # 15+ formatting helpers (toggleBold, insertLink, etc.)
+│   │   ├── core/             # Core utilities (formats, insertion, selection, detection)
+│   │   ├── operations/       # Block and list style operations
+│   │   ├── debug.ts          # Debug logging utilities
+│   │   ├── types.ts          # TypeScript type definitions
+│   │   └── index.ts          # Main actions export
+│   ├── plugins/              # First-party plugin implementations
+│   │   ├── tablePlugin.ts
+│   │   ├── tableGridPlugin.ts
+│   │   ├── mermaidPlugin.ts
+│   │   ├── tinyHighlight.ts
+│   │   ├── imageManagerPlugin.ts
+│   │   ├── accentSwatchPlugin.ts
+│   │   └── [more plugins]
+│   ├── marzipan.ts           # Main Marzipan class
+│   ├── parser.ts             # Markdown parser
+│   ├── shortcuts.ts          # Keyboard shortcuts manager
+│   ├── toolbar.ts            # Toolbar component
+│   ├── themes.ts             # Theme system (Solar, Cave)
+│   ├── styles.ts             # Style generation
+│   ├── link-tooltip.ts       # Link preview tooltips
+│   └── index.ts              # Package entry point
+├── dist/                     # Build output (ESM + .d.ts files, gitignored)
+├── docs/                     # Comprehensive documentation
+│   ├── README.md             # Documentation orientation
+│   ├── quick-start.md        # Installation and setup guide
+│   ├── api.md                # Full API reference
+│   ├── plugins.md            # Plugin catalogue
+│   └── types.d.ts            # Generated TypeScript definitions
+├── bakeshop-demo/            # Vite + React demonstration app
+│   ├── src/                  # Demo source code
+│   ├── README.md             # Demo guide
+│   └── [config files]
+├── public/                   # Static assets (logo, favicon)
+├── CHANGELOG.md              # Release notes and version history
+├── CONTRIBUTING.md           # Development workflow and standards
+├── OVERVIEW.md               # This document - project architecture
+├── README.md                 # Project introduction and quick start
+├── LICENSE                   # Apache 2.0 license
+└── [config files]            # package.json, tsconfig.json, vite.config.ts, etc.
 ```
 
 ## 🎯 Vision & Value
@@ -58,15 +91,66 @@ Updated October 4, 2025 to reflect the action rewrite and plugin exports:
 
 ## 🔌 Actions & Plugins
 
-### Actions (`src/actions`)
-- Toggle helpers for bold, italic, code, headers, quotes, lists, links, and task lists.
-- Utilities for selection expansion, format detection, undo integration, and debug logging.
-- Exported via `import { actions } from '@pinkpixel/marzipan'` (and re-exported types) so custom toolbars or shortcut systems can share the same logic as Marzipan’s UI.
+### Actions System (`src/actions`) - Zero Dependencies! 🎉
 
-### Plugins (`src/plugins`)
-- Each plugin is a small factory that returns an object consumed by the editor.
-- Published individually for optimal tree shaking: e.g. `@pinkpixel/marzipan/plugins/tablePlugin`.
-- Coverage includes tables, Mermaid (ESM + CDN flavours), syntax highlighting, accent swatches, image pickers/managers, and helper utilities.
+**Major Feature:** All markdown formatting logic is now bundled internally, eliminating the need for external dependencies like `markdown-actions`.
+
+**Available Actions:**
+- **Text Formatting:** `toggleBold`, `toggleItalic`, `toggleCode`
+- **Headers:** `insertHeader(level)`, `toggleH1`, `toggleH2`, `toggleH3` (supports H1-H6)
+- **Lists:** `toggleBulletList`, `toggleNumberedList`, `toggleTaskList`
+- **Blocks:** `toggleQuote`
+- **Links:** `insertLink(options)` with smart URL detection
+- **Utilities:** `getActiveFormats`, `hasFormat`, `expandSelection`, `preserveSelection`
+- **Debug Tools:** `setDebugMode`, `getDebugMode` for development
+- **Custom Formats:** `applyCustomFormat` for creating custom formatting rules
+
+**Usage:**
+```ts
+import { actions } from '@pinkpixel/marzipan';
+const textarea = document.querySelector('textarea');
+actions.toggleBold(textarea);
+actions.insertHeader(textarea, 2); // H2
+actions.insertLink(textarea, { url: 'https://example.com', text: 'Click here' });
+```
+
+**Architecture:**
+- `core/` - Selection handling, format detection, text insertion
+- `operations/` - Block and multiline style operations
+- `debug.ts` - Optional debug logging for development
+- `types.ts` - Comprehensive TypeScript definitions
+
+### Plugin System (`src/plugins`)
+
+**Tree-Shakeable Design:** Each plugin is a factory function published as a separate import for optimal bundle size.
+
+**Available Plugins:**
+- **Tables:**
+  - `tablePlugin` - Basic table support
+  - `tableGridPlugin` - Interactive table grid
+  - `tableGeneratorPlugin` - Table creation wizard
+- **Diagrams:**
+  - `mermaidPlugin` - ESM import of Mermaid
+  - `mermaidExternalPlugin` - CDN-based Mermaid loading
+- **Syntax Highlighting:**
+  - `tinyHighlightPlugin` - Lightweight code highlighting
+  - `tinyHighlightStyles` - Accompanying styles
+- **Media:**
+  - `imageManagerPlugin` - Image upload and management
+  - `imagePickerPlugin` - Image selection interface
+- **Theming:**
+  - `accentSwatchPlugin` - Color accent picker synchronized across instances
+
+**Usage:**
+```ts
+import { Marzipan } from '@pinkpixel/marzipan';
+import { tablePlugin } from '@pinkpixel/marzipan/plugins/tablePlugin';
+import { mermaidPlugin } from '@pinkpixel/marzipan/plugins/mermaidPlugin';
+
+new Marzipan('#editor', {
+  plugins: [tablePlugin(), mermaidPlugin()]
+});
+```
 
 ## 🛠️ Tooling & Scripts
 
@@ -84,12 +168,35 @@ The project targets **Node.js 20+** as defined in `package.json` and mirrored in
 3. Launch the Bakeshop from `bakeshop-demo/` (`npm run dev`) to exercise plugins and actions.
 4. Follow [CONTRIBUTING.md](CONTRIBUTING.md) for coding standards and pull request expectations.
 
-## 🔮 Roadmap Notes
+## 🔮 Roadmap & Future Enhancements
 
-- Continue expanding plugin configuration hooks (e.g., custom toolbar buttons for tables).
-- Evaluate collaborative editing and persistence layers.
-- Ship framework-specific wrappers (React hook, Vue component, Svelte action) built on the shared core.
+### Near-term Goals
+- Expand plugin configuration hooks (custom toolbar buttons, plugin APIs)
+- Enhanced table editing capabilities with more grid features
+- Additional syntax highlighting themes
+
+### Mid-term Goals  
+- Evaluate collaborative editing capabilities
+- Persistence layer options (localStorage, IndexedDB adapters)
+- Real-time preview synchronization improvements
+
+### Long-term Vision
+- Framework-specific wrappers:
+  - React: `useMarzipan` hook
+  - Vue: `<MarzipanEditor>` component
+  - Svelte: Marzipan action
+- Plugin marketplace ecosystem
+- Advanced formatting plugins (footnotes, abbreviations, etc.)
+- Mobile-first editing experience enhancements
+
+## 📊 Project Status
+
+- ✅ **Production Ready** - v1.0.6 stable release
+- ✅ **Zero Dependencies** - Complete self-contained solution
+- ✅ **Comprehensive Documentation** - Full guides and API reference
+- ✅ **Active Development** - Regular updates and improvements
+- ✅ **Open Source** - Apache 2.0 license, community contributions welcome
 
 ---
 
-_Last updated: October 4, 2025 – documentation & dependency-free actions refresh._
+_Last updated: October 4, 2025 – Complete project analysis and enhanced documentation._

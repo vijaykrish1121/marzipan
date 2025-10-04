@@ -1,7 +1,7 @@
 // @ts-nocheck
 /**
  * Marzipan - A lightweight markdown editor and viewer
- * @version 1.0.0
+ * @version 1.0.6
  * @license Apache-2.0
  */
 
@@ -116,10 +116,10 @@ class Marzipan {
         
         // Update toolbar states on selection change
         this.textarea.addEventListener('selectionchange', () => {
-          this.toolbar.updateButtonStates();
+          this.toolbar?.updateButtonStates?.();
         });
         this.textarea.addEventListener('input', () => {
-          this.toolbar.updateButtonStates();
+          this.toolbar?.updateButtonStates?.();
         });
       }
 
