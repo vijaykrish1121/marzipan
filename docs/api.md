@@ -84,6 +84,16 @@ Set the markdown content in the editor.
 editor.setValue('# New Content\n\nThis replaces the existing content.');
 ```
 
+#### `getStats()`
+Return live statistics for the current document.
+
+**Returns:** `{ chars: number, words: number, lines: number, line: number, column: number }`
+
+```javascript
+const stats = editor.getStats();
+console.log(`${stats.words} words • line ${stats.line}:${stats.column}`);
+```
+
 #### `getRenderedHTML(options)`
 Get the rendered HTML of the current content.
 
@@ -127,13 +137,23 @@ Blur the editor textarea.
 editor.blur();
 ```
 
+### DOM Helpers
+
+#### `getContainer()`
+Return the root container element that wraps the toolbar, textarea, and preview.
+
+```javascript
+const container = editor.getContainer();
+container.classList.add('rounded');
+```
+
 ### Display Modes
 
-#### `showPlainTextarea(show)`
+#### `showPlainTextarea(show?)`
 Toggle between plain textarea and overlay markdown preview.
 
 **Parameters:**
-- `show` *(boolean)* - `true` to show plain textarea, `false` to show overlay
+- `show` *(boolean | undefined)* - `true` to show plain textarea, `false` to show overlay. Call without arguments to read the current state.
 
 **Returns:** `boolean` - Current plain textarea state
 
@@ -143,6 +163,9 @@ editor.showPlainTextarea(true);
 
 // Show markdown overlay
 editor.showPlainTextarea(false);
+
+// Check current mode without changing it
+const isPlain = editor.showPlainTextarea();
 ```
 
 #### `showPreviewMode(show)`
@@ -258,14 +281,16 @@ Marzipan.setTheme('cave');
 Marzipan.setTheme({
   name: 'custom',
   colors: {
-    background: '#1a1a1a',
-    text: '#ffffff'
+    bgPrimary: '#1a1a1a',
+    bgSecondary: '#121212',
+    text: '#ffffff',
+    toolbarBg: '#141414'
   }
 });
 
 // Override colors
 Marzipan.setTheme('solar', {
-  background: '#002b36'
+  bgPrimary: '#002b36'
 });
 ```
 
@@ -425,24 +450,21 @@ new Marzipan('#editor', { toolbar: true });
 // Custom button configuration
 new Marzipan('#editor', {
   toolbar: {
-    buttons: ['bold', 'italic', 'code', '|', 'link', 'quote', '|', 'bulletList', 'orderedList']
+    buttons: ['bold', 'italic', 'code', '|', 'link', 'quote', '|', 'bulletList', 'orderedList', '|', 'plain', 'view']
   }
 });
 ```
 
-Available toolbar buttons:
-- `bold` – **Bold** text
-- `italic` – *Italic* text
-- `code` – `Inline code`
-- `link` – Insert or edit links
-- `quote` – Blockquotes
-- `bulletList` – Unordered lists
-- `orderedList` – Ordered lists
-- `taskList` – Task list checkboxes
-- `h1` / `h2` / `h3` – Heading levels
-- `toggle-view-menu` – Opens the view dropdown (plain/preview/normal)
-- `toggle-plain` – Direct plain/preview toggle (legacy name)
-- `separator` (`|`) – Visual divider
+Available button shorthands:
+- `bold`, `italic`, `code`
+- `link`, `quote`
+- `h1`, `h2`, `h3`
+- `bulletList`, `orderedList`, `taskList`
+- `view` – Opens the view dropdown (plain/preview/overlay)
+- `plain` – Toggles the overlay on/off directly
+- `|`, `separator`, `divider` – Visual separators
+
+Pass full `ToolbarButtonConfig` objects if you need to customise icons, titles, or actions beyond the built-in presets.
 
 ## Themes
 
@@ -450,8 +472,8 @@ Marzipan includes built-in themes and supports custom themes.
 
 ### Built-in Themes
 
-- `solar` - Light theme with warm colors (default)
-- `cave` - Dark theme with cool colors
+- `solar` / `light` - Light theme with warm colors (default)
+- `cave` / `dark` - Dark theme with cool colors
 
 ### Using Themes
 
@@ -468,43 +490,68 @@ new Marzipan('#editor', {
 const myTheme = {
   name: 'purple',
   colors: {
-    background: '#2d1b69',
+    bgPrimary: '#2d1b69',
+    bgSecondary: '#24124f',
     text: '#e1d5f7',
-    comment: '#9c88c4',
-    keyword: '#bb9af7',
-    string: '#9ece6a',
-    number: '#ff9e64',
-    // ... more colors
+    textSecondary: '#c9b4e8',
+    h1: '#bb9af7',
+    h2: '#9ece6a',
+    h3: '#ff9e64',
+    link: '#a1c4ff',
+    codeBg: 'rgba(155, 136, 196, 0.2)',
+    toolbarBg: '#1b0f47'
   }
 };
 
 Marzipan.setTheme(myTheme);
+
+// Per-instance tweaks can also be merged with the `colors` option
+new Marzipan('#editor', {
+  theme: 'solar',
+  colors: {
+    toolbarActive: '#ffe066',
+    cursor: '#ff8c00'
+  }
+});
 ```
 
 ### Theme Color Properties
 
 ```javascript
 const themeColors = {
-  // Base colors
-  background: '#ffffff',      // Main background
-  text: '#333333',           // Primary text
-  textMuted: '#666666',      // Secondary text
-  
-  // Syntax highlighting
-  comment: '#93a1a1',        // Comments
-  keyword: '#859900',        // Keywords (bold, headers)
-  string: '#2aa198',         // Strings and links
-  number: '#d33682',         // Numbers
-  punctuation: '#586e75',    // Punctuation
-  
-  // UI elements
-  selection: '#eee8d5',      // Text selection
-  border: '#e1e1e1',         // Borders
-  toolbar: '#f8f8f8',        // Toolbar background
-  
-  // Interactive elements
-  linkHover: '#0066cc',      // Link hover color
-  buttonActive: '#007acc',   // Active button background
+  // Base appearance
+  bgPrimary: '#ffffff',
+  bgSecondary: '#f8f9fa',
+  text: '#333333',
+  textSecondary: '#666666',
+
+  // Typography accents
+  h1: '#1a73e8',
+  h2: '#0f9d58',
+  h3: '#fbbc05',
+  strong: '#1a73e8',
+  em: '#d93025',
+  link: '#1a73e8',
+  code: '#d93025',
+  codeBg: 'rgba(26, 115, 232, 0.1)',
+
+  // Block elements
+  blockquote: '#5f6368',
+  hr: '#dadce0',
+  syntaxMarker: 'rgba(95, 99, 104, 0.5)',
+  listMarker: '#1a73e8',
+
+  // Caret & selection
+  cursor: '#1a73e8',
+  selection: 'rgba(26, 115, 232, 0.2)',
+
+  // Toolbar styling
+  toolbarBg: '#ffffff',
+  toolbarBorder: 'rgba(0, 0, 0, 0.08)',
+  toolbarIcon: '#1a73e8',
+  toolbarHover: '#f1f3f4',
+  toolbarActive: '#e8f0fe',
+  border: '#dadce0'
 };
 ```
 

@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.8] - 2025-10-04
+
+### Added
+- Toolbar button shorthands (`plain`, `view`, and separators) so custom toolbars can be composed quickly with strings instead of verbose config objects.
+- Prompt customization for the image picker plugin via `placeholder` and `promptMessage` options.
+
+### Changed
+- Restored per-instance theme overrides and shipped `light`/`dark` aliases alongside `solar`/`cave`, ensuring `colors` merges reliably.
+- Exposed `getStats()` and `getContainer()` on editor instances and made `showPlainTextarea()` return the current state when called without arguments.
+- Refreshed documentation (core docs + VitePress site) to cover the new toolbar presets, theme color tokens, and expanded preview examples.
+
+### Fixed
+- Table styling now respects themed secondary backgrounds for consistent appearance across custom palettes.
+
+---
+
 ## [1.0.7] - 2025-10-04
 
 ### Added
@@ -39,6 +55,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Live overlay preview, theming system, toolbar, keyboard shortcuts, stats panel, and plugin foundation.
 - TypeScript declarations, documentation set, and contribution guide.
 
-[Unreleased]: https://github.com/pinkpixel-dev/marzipan/compare/v1.0.7...HEAD
+[Unreleased]: https://github.com/pinkpixel-dev/marzipan/compare/v1.0.8...HEAD
+[1.0.8]: https://github.com/pinkpixel-dev/marzipan/compare/v1.0.7...v1.0.8
+[1.0.8-release]: https://github.com/pinkpixel-dev/marzipan/releases/tag/v1.0.8
 [1.0.7]: https://github.com/pinkpixel-dev/marzipan/compare/v1.0.6...v1.0.7
-[1.0.7]: https://github.com/pinkpixel-dev/marzipan/releases/tag/v1.0.7
+[1.0.7-release]: https://github.com/pinkpixel-dev/marzipan/releases/tag/v1.0.7

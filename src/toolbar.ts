@@ -10,6 +10,23 @@ interface ToolbarHost {
   showPreviewMode?: (enabled: boolean) => void;
 }
 
+type ToolbarButtonPreset =
+  | 'bold'
+  | 'italic'
+  | 'code'
+  | 'link'
+  | 'quote'
+  | 'bulletList'
+  | 'orderedList'
+  | 'taskList'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'view'
+  | 'plain';
+
+type ToolbarButtonEntry = ToolbarButtonConfig | ToolbarButtonPreset | '|' | 'separator' | 'divider';
+
 interface ToolbarButtonConfig {
   name?: keyof typeof icons | string;
   icon?: string;
@@ -19,16 +36,54 @@ interface ToolbarButtonConfig {
   hasDropdown?: boolean;
 }
 
+const BUTTON_PRESETS: Record<ToolbarButtonPreset, ToolbarButtonConfig> = {
+  bold: { name: 'bold', icon: icons.boldIcon, title: 'Bold (Ctrl+B)', action: 'toggleBold' },
+  italic: { name: 'italic', icon: icons.italicIcon, title: 'Italic (Ctrl+I)', action: 'toggleItalic' },
+  code: { name: 'code', icon: icons.codeIcon, title: 'Code (Ctrl+`)', action: 'toggleCode' },
+  link: { name: 'link', icon: icons.linkIcon, title: 'Insert Link (Ctrl+K)', action: 'insertLink' },
+  quote: { name: 'quote', icon: icons.quoteIcon, title: 'Quote', action: 'toggleQuote' },
+  bulletList: { name: 'bulletList', icon: icons.bulletListIcon, title: 'Bullet List', action: 'toggleBulletList' },
+  orderedList: { name: 'orderedList', icon: icons.orderedListIcon, title: 'Numbered List', action: 'toggleNumberedList' },
+  taskList: { name: 'taskList', icon: icons.taskListIcon, title: 'Task List', action: 'toggleTaskList' },
+  h1: { name: 'h1', icon: icons.h1Icon, title: 'Heading 1', action: 'insertH1' },
+  h2: { name: 'h2', icon: icons.h2Icon, title: 'Heading 2', action: 'insertH2' },
+  h3: { name: 'h3', icon: icons.h3Icon, title: 'Heading 3', action: 'insertH3' },
+  view: { name: 'viewMode', icon: icons.eyeIcon, title: 'View mode', action: 'toggle-view-menu', hasDropdown: true },
+  plain: { name: 'togglePlain', icon: icons.eyeOffIcon, title: 'Toggle plain textarea', action: 'toggle-plain' }
+};
+
+const DEFAULT_BUTTONS: ToolbarButtonEntry[] = [
+  'bold',
+  'italic',
+  '|',
+  'h1',
+  'h2',
+  'h3',
+  '|',
+  'link',
+  'code',
+  '|',
+  'quote',
+  '|',
+  'bulletList',
+  'orderedList',
+  'taskList',
+  '|',
+  'view'
+];
+
+const SEPARATOR_TOKENS = new Set(['|', 'separator', 'divider']);
+
 export class Toolbar {
   private readonly editor: ToolbarHost;
-  private readonly buttonConfig: ToolbarButtonConfig[] | null;
+  private readonly buttonConfig: ToolbarButtonEntry[] | null;
   private container: HTMLDivElement | null = null;
   private buttons: Record<string, HTMLButtonElement> = {};
   private viewModeButton?: HTMLButtonElement;
   private handleDocumentClick?: (event: MouseEvent) => void;
   private readonly actions: MarkdownActions = markdownActions;
 
-  constructor(editor: ToolbarHost, buttonConfig: ToolbarButtonConfig[] | null = null) {
+  constructor(editor: ToolbarHost, buttonConfig: ToolbarButtonEntry[] | null = null) {
     this.editor = editor;
     this.buttonConfig = buttonConfig;
   }
@@ -39,28 +94,9 @@ export class Toolbar {
     this.container.setAttribute('role', 'toolbar');
     this.container.setAttribute('aria-label', 'Text formatting');
 
-    const buttonConfig =
-      this.buttonConfig ?? [
-        { name: 'bold', icon: icons.boldIcon, title: 'Bold (Ctrl+B)', action: 'toggleBold' },
-        { name: 'italic', icon: icons.italicIcon, title: 'Italic (Ctrl+I)', action: 'toggleItalic' },
-        { separator: true },
-        { name: 'h1', icon: icons.h1Icon, title: 'Heading 1', action: 'insertH1' },
-        { name: 'h2', icon: icons.h2Icon, title: 'Heading 2', action: 'insertH2' },
-        { name: 'h3', icon: icons.h3Icon, title: 'Heading 3', action: 'insertH3' },
-        { separator: true },
-        { name: 'link', icon: icons.linkIcon, title: 'Insert Link (Ctrl+K)', action: 'insertLink' },
-        { name: 'code', icon: icons.codeIcon, title: 'Code (Ctrl+`)', action: 'toggleCode' },
-        { separator: true },
-        { name: 'quote', icon: icons.quoteIcon, title: 'Quote', action: 'toggleQuote' },
-        { separator: true },
-        { name: 'bulletList', icon: icons.bulletListIcon, title: 'Bullet List', action: 'toggleBulletList' },
-        { name: 'orderedList', icon: icons.orderedListIcon, title: 'Numbered List', action: 'toggleNumberedList' },
-        { name: 'taskList', icon: icons.taskListIcon, title: 'Task List', action: 'toggleTaskList' },
-        { separator: true },
-        { name: 'viewMode', icon: icons.eyeIcon, title: 'View mode', action: 'toggle-view-menu', hasDropdown: true },
-      ];
+    const normalizedButtons = this.resolveButtons(this.buttonConfig ?? DEFAULT_BUTTONS);
 
-    buttonConfig.forEach((config) => {
+    normalizedButtons.forEach((config) => {
       if (config.separator) {
         const separator = document.createElement('div');
         separator.className = 'marzipan-toolbar-separator';
@@ -82,6 +118,33 @@ export class Toolbar {
     }
 
     return this.container;
+  }
+
+  private resolveButtons(entries: ToolbarButtonEntry[]): ToolbarButtonConfig[] {
+    const resolved: ToolbarButtonConfig[] = [];
+
+    entries.forEach((entry) => {
+      if (!entry) return;
+
+      if (typeof entry === 'string') {
+        if (SEPARATOR_TOKENS.has(entry)) {
+          resolved.push({ separator: true });
+          return;
+        }
+
+        const preset = BUTTON_PRESETS[entry as ToolbarButtonPreset];
+        if (preset) {
+          resolved.push({ ...preset });
+        } else {
+          console.warn(`[Marzipan] Unknown toolbar button preset: ${entry}`);
+        }
+        return;
+      }
+
+      resolved.push({ ...entry });
+    });
+
+    return resolved;
   }
 
   private createButton(config: ToolbarButtonConfig): HTMLButtonElement {

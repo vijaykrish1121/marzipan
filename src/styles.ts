@@ -830,12 +830,12 @@ export function generateStyles(options: any = {}) {
     }
     
     .marzipan-preview .marzipan-table th {
-      background: var(--bgSecondary, #f5f5f5);
+      background: var(--bg-secondary, #f5f5f5);
       font-weight: 600;
     }
     
     .marzipan-preview .marzipan-table tr:nth-child(even) {
-      background: var(--bgSecondary, #f9f9f9);
+      background: var(--bg-secondary, #f9f9f9);
     }
     
     /* In preview mode - hide table syntax markers */

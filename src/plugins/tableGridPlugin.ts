@@ -9,6 +9,14 @@ type MzEditor = {
   updatePreview: () => void;
 };
 
+export interface TableGridPluginOptions {
+  maxRows?: number;
+  maxColumns?: number;
+  maxCols?: number;
+  label?: string;
+  title?: string;
+}
+
 function insertAtCursor(editor: MzEditor, text: string) {
   const ta = editor.textarea;
   const s = ta.selectionStart ?? 0;
@@ -18,25 +26,20 @@ function insertAtCursor(editor: MzEditor, text: string) {
   ta.focus();
 }
 
-export function tableGridPlugin(opts?: {
-  maxRows?: number;        // default 10
-  maxCols?: number;        // default 10
-  label?: string;          // toolbar label
-  title?: string;          // tooltip
-}) {
-  const maxR = Math.max(1, opts?.maxRows ?? 10);
-  const maxC = Math.max(1, opts?.maxCols ?? 10);
-  const label = opts?.label ?? '▦';
-  const title = opts?.title ?? 'Insert table';
+export function tableGridPlugin(opts: TableGridPluginOptions = {}) {
+  const resolvedMaxRows = Math.max(1, opts.maxRows ?? 10);
+  const resolvedMaxCols = Math.max(1, opts.maxColumns ?? opts.maxCols ?? 10);
+  const label = opts.label ?? '▦';
+  const title = opts.title ?? 'Insert table';
 
   return (editor: MzEditor) => {
     const bar = editor.container.querySelector('.marzipan-toolbar') as HTMLElement ?? editor.container;
 
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'mz-btn mz-btn-tablegrid';
-    btn.title = title;
-    btn.textContent = label;
+      btn.className = 'mz-btn mz-btn-tablegrid';
+      btn.title = title;
+      btn.textContent = label;
 
     let pop: HTMLElement | null = null;
 
@@ -62,15 +65,15 @@ export function tableGridPlugin(opts?: {
 
       const grid = document.createElement('div');
       grid.className = 'mz-tablegrid';
-      grid.style.setProperty('--r', String(maxR));
-      grid.style.setProperty('--c', String(maxC));
+      grid.style.setProperty('--r', String(resolvedMaxRows));
+      grid.style.setProperty('--c', String(resolvedMaxCols));
 
       const status = document.createElement('div');
       status.className = 'mz-tablegrid-status';
       status.textContent = '0 × 0';
 
-      for (let r = 1; r <= maxR; r++) {
-        for (let c = 1; c <= maxC; c++) {
+      for (let r = 1; r <= resolvedMaxRows; r++) {
+        for (let c = 1; c <= resolvedMaxCols; c++) {
           const cell = document.createElement('div');
           cell.className = 'mz-cell';
           cell.dataset.r = String(r);

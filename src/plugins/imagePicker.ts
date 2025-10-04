@@ -6,6 +6,8 @@ export type ImagePickerOptions = {
   uploader?: (file: File) => Promise<string>;
   label?: string; // button label or emoji
   title?: string; // tooltip
+  placeholder?: string; // default value for prompt
+  promptMessage?: string; // custom prompt message
 };
 
 function insertAtCursor(editor: any, text: string) {
@@ -32,11 +34,16 @@ export function imagePickerPlugin(opts: ImagePickerOptions = {}) {
     btn.textContent = label;
 
     btn.onclick = async () => {
-      const mode = prompt('Paste an image URL, or type "upload" to pick a file:');
+      const promptMessage = opts.promptMessage ?? 'Paste an image URL, or type "upload" to pick a file:';
+      const initialValue = opts.placeholder ?? '';
+      const mode = prompt(promptMessage, initialValue);
       if (!mode) return;
 
-      if (mode.toLowerCase() !== 'upload') {
-        insertAtCursor(editor, `![alt text](${mode})`);
+      const normalized = mode.trim();
+      if (!normalized) return;
+
+      if (normalized.toLowerCase() !== 'upload') {
+        insertAtCursor(editor, `![alt text](${normalized})`);
         return;
       }
 

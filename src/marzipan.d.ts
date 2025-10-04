@@ -115,11 +115,34 @@ export interface ToolbarButtonConfig {
 }
 
 /**
+ * Supported toolbar button shorthands
+ */
+export type ToolbarButtonShortcut =
+  | 'bold'
+  | 'italic'
+  | 'code'
+  | 'link'
+  | 'quote'
+  | 'bulletList'
+  | 'orderedList'
+  | 'taskList'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'view'
+  | 'plain'
+  | '|'
+  | 'separator'
+  | 'divider';
+
+export type ToolbarButtonOption = ToolbarButtonConfig | ToolbarButtonShortcut;
+
+/**
  * Toolbar configuration
  */
 export interface ToolbarConfig {
   /** Custom button configuration */
-  buttons?: ToolbarButtonConfig[];
+  buttons?: ToolbarButtonOption[];
 }
 
 /**
@@ -280,8 +303,8 @@ export interface MarzipanInstance {
   getPreviewHTML(): string;
   
   // View mode methods
-  /** Toggle plain textarea mode (hide/show overlay) */
-  showPlainTextarea(show: boolean): boolean;
+  /** Toggle plain textarea mode (hide/show overlay). Call without arguments to get current state. */
+  showPlainTextarea(show?: boolean): boolean;
   
   /** Toggle preview-only mode */
   showPreviewMode(show: boolean): boolean;

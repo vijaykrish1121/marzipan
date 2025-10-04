@@ -8,7 +8,7 @@
 import { MarkdownParser } from './parser';
 import { ShortcutsManager } from './shortcuts';
 import { generateStyles } from './styles';
-import { getTheme, mergeTheme, solar, themeToCSSVars } from './themes';
+import { getTheme, mergeTheme, solar } from './themes';
 import { Toolbar } from './toolbar';
 import { LinkTooltip } from './link-tooltip';
 
@@ -77,9 +77,11 @@ class Marzipan {
       this.element = element;
       
       // Store the original theme option before merging
-      this.instanceTheme = options.theme || null;
-      
       this.options = this._mergeOptions(options);
+
+      this.instanceTheme = this.options.theme ?? null;
+      this.instanceColors = this.options.colors ? { ...this.options.colors } : null;
+      this._appliedThemeColorKeys = new Set();
       this.instanceId = ++Marzipan.instanceCount;
       this.initialized = false;
       this._autoResizeInputHandler = null;
@@ -141,7 +143,7 @@ class Marzipan {
      * Merge user options with defaults
      * @private
      */
-    _mergeOptions(options) {
+    _mergeOptions(options = {}) {
       const defaults = {
         // Typography
         fontSize: '14px',
@@ -177,18 +179,37 @@ class Marzipan {
         showStats: false,
         toolbar: false,
         statsFormatter: null,
-        smartLists: true  // Enable smart list continuation
+        smartLists: true,  // Enable smart list continuation
+
+        // Theme overrides
+        theme: null,
+        colors: undefined
       };
       
-      // Remove theme and colors from options - these are now global
-      const { theme, colors, hooks, plugins, ...cleanOptions } = options;
+      const { hooks, plugins, ...cleanOptions } = options;
 
-      return {
+      const merged = {
         ...defaults,
-        ...cleanOptions,
-        hooks: hooks ? { ...hooks } : undefined,
-        plugins: Array.isArray(plugins) ? [...plugins] : undefined
+        ...cleanOptions
       };
+
+      if (hooks) {
+        merged.hooks = { ...hooks };
+      }
+
+      if (Array.isArray(plugins)) {
+        merged.plugins = [...plugins];
+      }
+
+      if (merged.theme && typeof merged.theme === 'object') {
+        merged.theme = { ...merged.theme };
+      }
+
+      if (merged.colors) {
+        merged.colors = { ...merged.colors };
+      }
+
+      return merged;
     }
 
     /**
@@ -221,6 +242,60 @@ class Marzipan {
       return applied;
     }
 
+    _resolveTheme() {
+      let baseTheme = this.instanceTheme;
+
+      if (typeof baseTheme === 'string') {
+        baseTheme = getTheme(baseTheme);
+      }
+
+      if (!baseTheme) {
+        baseTheme = Marzipan.currentTheme || solar;
+      }
+
+      if (typeof baseTheme === 'string') {
+        baseTheme = getTheme(baseTheme);
+      }
+
+      if (this.instanceColors) {
+        return mergeTheme(baseTheme, this.instanceColors);
+      }
+
+      return baseTheme;
+    }
+
+    _applyTheme(target) {
+      if (!target) return;
+
+      const themeConfig = this._resolveTheme();
+      const themeName = (typeof this.instanceTheme === 'string')
+        ? this.instanceTheme
+        : themeConfig?.name;
+
+      if (themeName) {
+        target.setAttribute('data-theme', themeName);
+      }
+
+      if (!this._appliedThemeColorKeys) {
+        this._appliedThemeColorKeys = new Set();
+      }
+
+      for (const key of this._appliedThemeColorKeys) {
+        target.style.removeProperty(key);
+      }
+      this._appliedThemeColorKeys.clear();
+
+      const colors = themeConfig?.colors;
+      if (!colors) return;
+
+      for (const [colorKey, value] of Object.entries(colors)) {
+        if (value == null) continue;
+        const cssVar = `--${colorKey.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+        target.style.setProperty(cssVar, String(value));
+        this._appliedThemeColorKeys.add(cssVar);
+      }
+    }
+
     /**
      * Recover from existing DOM structure
      * @private
@@ -236,27 +311,13 @@ class Marzipan {
         // Wrap it in a container for consistency
         this.container = document.createElement('div');
         this.container.className = 'marzipan-container';
-        // Use instance theme if provided, otherwise use global theme
-        const themeToUse = this.instanceTheme || Marzipan.currentTheme || solar;
-        const themeName = typeof themeToUse === 'string' ? themeToUse : themeToUse.name;
-        if (themeName) {
-          this.container.setAttribute('data-theme', themeName);
-        }
-        
-        // If using instance theme, apply CSS variables to container
-        if (this.instanceTheme) {
-          const themeObj = typeof this.instanceTheme === 'string' ? getTheme(this.instanceTheme) : this.instanceTheme;
-          if (themeObj && themeObj.colors) {
-            const cssVars = themeToCSSVars(themeObj.colors);
-            this.container.style.cssText += cssVars;
-          }
-        }
         wrapper.parentNode.insertBefore(this.container, wrapper);
         this.container.appendChild(wrapper);
       }
 
       if (this.container) {
         this.container.setAttribute('data-marzipan-instance', String(this.instanceId));
+        this._applyTheme(this.container);
       }
 
       if (!this.wrapper) {
@@ -279,7 +340,7 @@ class Marzipan {
 
       // Store reference on wrapper
       this.wrapper._instance = this;
-      
+
       // Apply instance-specific styles via CSS custom properties
       if (this.options.fontSize) {
         this.wrapper.style.setProperty('--instance-font-size', this.options.fontSize);
@@ -344,22 +405,8 @@ class Marzipan {
       this.container.className = 'marzipan-container';
       this.container.setAttribute('data-marzipan-instance', String(this.instanceId));
       
-      // Set theme on container - use instance theme if provided
-      const themeToUse = this.instanceTheme || Marzipan.currentTheme || solar;
-      const themeName = typeof themeToUse === 'string' ? themeToUse : themeToUse.name;
-      if (themeName) {
-        this.container.setAttribute('data-theme', themeName);
-      }
-      
-      // If using instance theme, apply CSS variables to container
-      if (this.instanceTheme) {
-        const themeObj = typeof this.instanceTheme === 'string' ? getTheme(this.instanceTheme) : this.instanceTheme;
-        if (themeObj && themeObj.colors) {
-          const cssVars = themeToCSSVars(themeObj.colors);
-          this.container.style.cssText += cssVars;
-        }
-      }
-      
+      this._applyTheme(this.container);
+
       // Create wrapper for editor
       this.wrapper = document.createElement('div');
       this.wrapper.className = 'marzipan-wrapper';
@@ -807,6 +854,22 @@ class Marzipan {
       }
     }
 
+    /**
+     * Get calculated editor statistics
+     * @returns {object} Stats object
+     */
+    getStats() {
+      return this._computeStats();
+    }
+
+    /**
+     * Get the container element hosting the editor
+     * @returns {HTMLElement} Container element
+     */
+    getContainer() {
+      return this.container;
+    }
+
 
     /**
      * Get the rendered HTML of the current content
@@ -876,6 +939,9 @@ class Marzipan {
      */
     reinit(options = {}) {
       this.options = this._mergeOptions({ ...this.options, ...options });
+      this.instanceTheme = this.options.theme ?? null;
+      this.instanceColors = this.options.colors ? { ...this.options.colors } : null;
+      this._applyTheme(this.container);
       this._applyOptions();
       this._applyPlugins();
       this.updatePreview();
@@ -885,38 +951,51 @@ class Marzipan {
      * Update stats bar
      * @private
      */
-    _updateStats() {
-      if (!this.statsBar) return;
-      
+    _computeStats() {
+      if (!this.textarea) {
+        return {
+          chars: 0,
+          words: 0,
+          lines: 0,
+          line: 0,
+          column: 0
+        };
+      }
+
       const value = this.textarea.value;
       const lines = value.split('\n');
       const chars = value.length;
       const words = value.split(/\s+/).filter(w => w.length > 0).length;
-      
-      // Calculate line and column
+
       const selectionStart = this.textarea.selectionStart;
       const beforeCursor = value.substring(0, selectionStart);
       const linesBeforeCursor = beforeCursor.split('\n');
       const currentLine = linesBeforeCursor.length;
       const currentColumn = linesBeforeCursor[linesBeforeCursor.length - 1].length + 1;
-      
-      // Use custom formatter if provided
+
+      return {
+        chars,
+        words,
+        lines: lines.length,
+        line: currentLine,
+        column: currentColumn
+      };
+    }
+
+    _updateStats() {
+      if (!this.statsBar) return;
+
+      const stats = this._computeStats();
+
       if (this.options.statsFormatter) {
-        this.statsBar.innerHTML = this.options.statsFormatter({
-          chars,
-          words,
-          lines: lines.length,
-          line: currentLine,
-          column: currentColumn
-        });
+        this.statsBar.innerHTML = this.options.statsFormatter(stats);
       } else {
-        // Default format with live dot
         this.statsBar.innerHTML = `
           <div class="marzipan-stat">
             <span class="live-dot"></span>
-            <span>${chars} chars, ${words} words, ${lines.length} lines</span>
+            <span>${stats.chars} chars, ${stats.words} words, ${stats.lines} lines</span>
           </div>
-          <div class="marzipan-stat">Line ${currentLine}, Col ${currentColumn}</div>
+          <div class="marzipan-stat">Line ${stats.line}, Col ${stats.column}</div>
         `;
       }
     }
@@ -1104,6 +1183,10 @@ class Marzipan {
      * @returns {boolean} Current plain textarea state
      */
     showPlainTextarea(show) {
+      if (typeof show === 'undefined') {
+        return this.container.classList.contains('plain-mode');
+      }
+
       if (show) {
         // Show plain textarea mode (hide overlay)
         this.container.classList.add('plain-mode');
@@ -1150,6 +1233,11 @@ class Marzipan {
       this.element.MarzipanInstance = null;
       Marzipan.instances.delete(this.element);
 
+      if (this.numberUpdateTimeout) {
+        clearTimeout(this.numberUpdateTimeout);
+        this.numberUpdateTimeout = null;
+      }
+
       this._teardownAutoResize();
 
       if (this.linkTooltip) {
@@ -1178,6 +1266,13 @@ class Marzipan {
 
       if (this.container) {
         this.container.removeAttribute('data-marzipan-instance');
+      }
+
+      if (this._appliedThemeColorKeys && this.container) {
+        for (const key of this._appliedThemeColorKeys) {
+          this.container.style.removeProperty(key);
+        }
+        this._appliedThemeColorKeys.clear();
       }
 
       this.initialized = false;
@@ -1260,11 +1355,16 @@ class Marzipan {
       
       // Re-inject styles with new theme
       Marzipan.injectStyles(true);
+      const themeName = typeof theme === 'string' ? theme : themeObj?.name;
       
       // Update all existing instances - update container theme attribute
       document.querySelectorAll('.marzipan-container').forEach(container => {
-        const themeName = typeof themeObj === 'string' ? themeObj : themeObj.name;
-        if (themeName) {
+        const wrapper = container.querySelector('.marzipan-wrapper');
+        const instance = wrapper?._instance;
+        if (instance) {
+          instance._applyTheme(container);
+          instance.updatePreview();
+        } else if (themeName) {
           container.setAttribute('data-theme', themeName);
         }
       });
@@ -1272,16 +1372,13 @@ class Marzipan {
       // Also handle any old-style wrappers without containers
       document.querySelectorAll('.marzipan-wrapper').forEach(wrapper => {
         if (!wrapper.closest('.marzipan-container')) {
-          const themeName = typeof themeObj === 'string' ? themeObj : themeObj.name;
-          if (themeName) {
+          const instance = wrapper._instance;
+          if (instance) {
+            instance._applyTheme(wrapper);
+            instance.updatePreview();
+          } else if (themeName) {
             wrapper.setAttribute('data-theme', themeName);
           }
-        }
-        
-        // Trigger preview update for the instance
-        const instance = wrapper._instance;
-        if (instance) {
-          instance.updatePreview();
         }
       });
     }
@@ -1348,7 +1445,12 @@ Marzipan.MarkdownParser = MarkdownParser;
 Marzipan.ShortcutsManager = ShortcutsManager;
 
 // Export theme utilities
-Marzipan.themes = { solar, cave: getTheme('cave') };
+Marzipan.themes = {
+  solar,
+  cave: getTheme('cave'),
+  light: getTheme('light'),
+  dark: getTheme('dark')
+};
 Marzipan.getTheme = getTheme;
 
 // Set default theme

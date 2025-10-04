@@ -10,29 +10,30 @@ export interface MarzipanTheme {
 }
 
 export interface ThemeColors {
-  // Base colors
-  background: string;
-  text: string;
-  textMuted?: string;
-  
-  // Syntax highlighting
-  comment: string;
-  keyword: string;
-  string: string;
-  number: string;
-  punctuation?: string;
-  
-  // UI elements
+  bgPrimary?: string;
+  bgSecondary?: string;
+  text?: string;
+  textSecondary?: string;
+  h1?: string;
+  h2?: string;
+  h3?: string;
+  strong?: string;
+  em?: string;
+  link?: string;
+  code?: string;
+  codeBg?: string;
+  blockquote?: string;
+  hr?: string;
+  syntaxMarker?: string;
+  listMarker?: string;
+  cursor?: string;
   selection?: string;
+  toolbarBg?: string;
+  toolbarBorder?: string;
+  toolbarIcon?: string;
+  toolbarHover?: string;
+  toolbarActive?: string;
   border?: string;
-  toolbar?: string;
-  
-  // Interactive elements
-  linkHover?: string;
-  buttonActive?: string;
-  
-  // Additional colors for custom themes
-  [key: string]: string | undefined;
 }
 
 export interface MarzipanMobileOptions {
@@ -55,22 +56,29 @@ export type ChangeHandler = (value: string, instance: Marzipan) => void;
 
 export type KeydownHandler = (event: KeyboardEvent, instance: Marzipan) => void;
 
-export interface ToolbarConfig {
-  buttons: Array<ToolbarButton | '|'>;
-}
+export type ToolbarButtonShortcut =
+  | 'bold'
+  | 'italic'
+  | 'code'
+  | 'link'
+  | 'quote'
+  | 'bulletList'
+  | 'orderedList'
+  | 'taskList'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'view'
+  | 'plain'
+  | '|'
+  | 'separator'
+  | 'divider';
 
-export type ToolbarButton = 
-  | 'bold' 
-  | 'italic' 
-  | 'strikethrough' 
-  | 'code' 
-  | 'link' 
-  | 'image' 
-  | 'quote' 
-  | 'ul' 
-  | 'ol' 
-  | 'hr' 
-  | 'toggle-plain';
+export type ToolbarButtonOption = ToolbarButtonConfig | ToolbarButtonShortcut;
+
+export interface ToolbarConfig {
+  buttons: ToolbarButtonOption[];
+}
 
 export interface TextareaProps {
   [key: string]: any;
@@ -118,6 +126,7 @@ export interface MarzipanOptions {
   
   // Themes (per-instance)
   theme?: string | MarzipanTheme;
+  colors?: Partial<ThemeColors>;
 }
 
 export interface RenderOptions {
