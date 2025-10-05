@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.0.9] - 2025-01-05
+
+### Added
+- **Block Handles Plugin**: Interactive block manipulation system for the preview overlay
+  - Visual handles appear on hover for each markdown block
+  - Click handles to select blocks with visual feedback
+  - Right-click handles for context menu with copy/delete actions
+  - Keyboard shortcuts: Ctrl/Cmd+C to copy, Delete/Backspace to delete selected blocks
+  - Shift+Click on any block to select it instantly
+  - Block metadata tracking in parser (`data-block-id`, `data-block-type`, `data-line-start`, `data-line-end`)
+  - Customizable handle appearance, colors, and positioning
+  - Event system for block selection (`blockSelected`, `blockDeselected` events)
+  - Toast notifications for user feedback
+  - Full demo page showcasing all features (`examples/block-handles-demo.html`)
+  - Comprehensive documentation in `docs/block-handles.md`
+- Parser now adds block metadata attributes to all rendered elements for plugin integration
+- Exported `BlockHandlesPlugin` and related types from main package
+- Added `npm run serve` script for running examples locally
+
+### Changed
+- Block handles plugin is enabled by default (can be disabled with `blockHandles: false`)
+
+---
+
 ## [1.0.8] - 2025-10-04
 
 ### Added

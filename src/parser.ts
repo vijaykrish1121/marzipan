@@ -11,12 +11,30 @@
 export class MarkdownParser {
   // Track link index for anchor naming
   static linkIndex = 0;
+  
+  // Track block index for unique IDs
+  static blockIndex = 0;
 
   /**
    * Reset link index (call before parsing a new document)
    */
   static resetLinkIndex() {
     this.linkIndex = 0;
+  }
+  
+  /**
+   * Reset block index (call before parsing a new document)
+   */
+  static resetBlockIndex() {
+    this.blockIndex = 0;
+  }
+  
+  /**
+   * Generate unique block ID
+   * @returns {string} Unique block ID
+   */
+  static generateBlockId() {
+    return `mz-block-${this.blockIndex++}`;
   }
 
   /**
@@ -463,20 +481,46 @@ export class MarkdownParser {
   /**
    * Parse a single line of markdown
    * @param {string} line - Raw markdown line
+   * @param {number} lineIndex - Line index in the document
    * @returns {string} Parsed HTML line
    */
-  static parseLine(line) {
+  static parseLine(line, lineIndex = 0) {
     let html = this.escapeHtml(line);
 
     // Preserve indentation
     html = this.preserveIndentation(html, line);
+    
+    // Determine block type and generate metadata
+    let blockType = 'paragraph';
+    let blockAttrs = '';
 
     // Check for block elements first
     const horizontalRule = this.parseHorizontalRule(html);
-    if (horizontalRule) return horizontalRule;
+    if (horizontalRule) {
+      blockType = 'hr';
+      const blockId = this.generateBlockId();
+      blockAttrs = ` data-block-id="${blockId}" data-block-type="${blockType}" data-line-start="${lineIndex}" data-line-end="${lineIndex}"`;
+      return horizontalRule.replace('<div', `<div${blockAttrs}`);
+    }
 
     const codeBlock = this.parseCodeBlock(html);
-    if (codeBlock) return codeBlock;
+    if (codeBlock) {
+      blockType = 'code-fence';
+      const blockId = this.generateBlockId();
+      blockAttrs = ` data-block-id="${blockId}" data-block-type="${blockType}" data-line-start="${lineIndex}" data-line-end="${lineIndex}"`;
+      return codeBlock.replace('<div', `<div${blockAttrs}`);
+    }
+    
+    // Detect block type from HTML patterns
+    if (html.match(/^<h[1-6]/)) {
+      blockType = 'heading';
+    } else if (html.includes('class="blockquote"')) {
+      blockType = 'quote';
+    } else if (html.includes('class="bullet-list"')) {
+      blockType = 'list-item';
+    } else if (html.includes('class="ordered-list"')) {
+      blockType = 'list-item';
+    }
 
     // Parse block elements
     html = this.parseHeader(html);
@@ -486,15 +530,19 @@ export class MarkdownParser {
 
     // Parse inline elements
     html = this.parseInlineElements(html);
+    
+    // Generate block metadata
+    const blockId = this.generateBlockId();
+    blockAttrs = ` data-block-id="${blockId}" data-block-type="${blockType}" data-line-start="${lineIndex}" data-line-end="${lineIndex}"`;
 
     // Wrap in div to maintain line structure
     if (html.trim() === '') {
       // Intentionally use &nbsp; for empty lines to maintain vertical spacing
       // This causes a 0->1 character count difference but preserves visual alignment
-      return '<div>&nbsp;</div>';
+      return `<div${blockAttrs}>&nbsp;</div>`;
     }
 
-    return `<div>${html}</div>`;
+    return `<div${blockAttrs}>${html}</div>`;
   }
 
   /**
@@ -505,46 +553,54 @@ export class MarkdownParser {
    * @returns {string} Parsed HTML
    */
   static parse(text, activeLine = -1, showActiveLineRaw = false) {
-    // Reset link counter for each parse
+    // Reset link counter and block counter for each parse
     this.resetLinkIndex();
+    this.resetBlockIndex();
 
     const lines = text.split('\n');
     let inCodeBlock = false;
+    let codeBlockStart = -1;
 
     const parsedLines = lines.map((line, index) => {
       // Show raw markdown on active line if requested
       if (showActiveLineRaw && index === activeLine) {
         const content = this.escapeHtml(line) || '&nbsp;';
-        return `<div class="raw-line">${content}</div>`;
+        const blockId = this.generateBlockId();
+        return `<div class="raw-line" data-block-id="${blockId}" data-block-type="paragraph" data-line-start="${index}" data-line-end="${index}">${content}</div>`;
       }
 
       // Check if this line is a code fence
       const codeFenceRegex = /^```[^`]*$/;
       if (codeFenceRegex.test(line)) {
+        if (!inCodeBlock) {
+          codeBlockStart = index;
+        }
         inCodeBlock = !inCodeBlock;
         // Parse fence markers normally to get styled output
-        return this.parseLine(line);
+        return this.parseLine(line, index);
       }
 
       // If we're inside a code block, don't parse as markdown
       if (inCodeBlock) {
         const escaped = this.escapeHtml(line);
         const indented = this.preserveIndentation(escaped, line);
-        return `<div>${indented || '&nbsp;'}</div>`;
+        const blockId = this.generateBlockId();
+        return `<div data-block-id="${blockId}" data-block-type="code-content" data-line-start="${index}" data-line-end="${index}">${indented || '&nbsp;'}</div>`;
       }
       
       // Check if this is a table row - mark it for post-processing
       const escaped = this.escapeHtml(line);
       if (this.isTableRow(escaped)) {
+        const blockId = this.generateBlockId();
         if (this.isTableSeparator(escaped)) {
-          return `<div class="table-separator">${escaped}</div>`;
+          return `<div class="table-separator" data-block-id="${blockId}" data-block-type="table-separator" data-line-start="${index}" data-line-end="${index}">${escaped}</div>`;
         } else {
-          return `<div class="table-row">${escaped}</div>`;
+          return `<div class="table-row" data-block-id="${blockId}" data-block-type="table-row" data-line-start="${index}" data-line-end="${index}">${escaped}</div>`;
         }
       }
 
       // Otherwise, parse the markdown normally
-      return this.parseLine(line);
+      return this.parseLine(line, index);
     });
 
     // Join without newlines to prevent extra spacing

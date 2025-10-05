@@ -1,6 +1,6 @@
 {
   "name": "@pinkpixel/marzipan",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Pure TypeScript markdown editor library with overlay preview",
   "license": "Apache-2.0",
   "type": "module",
@@ -40,7 +40,8 @@
     "prettier": "prettier --write .",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run build",
-    "prepack": "npm run build"
+    "prepack": "npm run build",
+    "serve": "python3 -m http.server 8080"
   },
   "keywords": [
     "markdown",

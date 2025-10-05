@@ -58,6 +58,15 @@ export default function PluginsGallery() {
               import {`{ accentSwatchPlugin }`} from '@pinkpixel/marzipan/plugins/accentSwatchPlugin'
             </code>
           </div>
+
+          {/* Block Handles */}
+          <div className="border-l-4 border-blue-400/70 pl-4">
+            <h4 className="font-bold text-lg text-slate-100 mb-2">Block Handles Plugin</h4>
+            <p className="text-slate-300 mb-2">Interactive handles for selecting, copying, and deleting markdown blocks with visual feedback and keyboard shortcuts.</p>
+            <code className="bg-slate-800 border border-slate-600 px-3 py-1 rounded text-sm text-slate-100">
+              blockHandles: true // Built-in feature
+            </code>
+          </div>
         </div>
       </div>
 
@@ -70,6 +79,19 @@ import { mermaidPlugin } from '@pinkpixel/marzipan/plugins/mermaidPlugin';
 
 new Marzipan('#editor', {
   toolbar: true,
+  
+  // Configure built-in block handles
+  blockHandles: {
+    enabled: true,
+    showOnHover: true,
+    colors: {
+      hover: 'rgba(236, 72, 153, 0.1)',
+      selected: 'rgba(236, 72, 153, 0.2)',
+      handle: 'rgba(236, 72, 153, 0.9)',
+    }
+  },
+  
+  // Add plugins
   plugins: [
     tablePlugin({ defaultColumns: 3, defaultRows: 4 }),
     mermaidPlugin({ theme: 'dark' }),

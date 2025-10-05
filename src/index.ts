@@ -14,6 +14,10 @@ export * from './themes'
 export { generateStyles } from './styles'
 export * as actions from './actions'
 
+// Export plugins
+export { BlockHandlesPlugin } from './plugins'
+export type { BlockHandle, BlockHandlesConfig } from './plugins'
+
 // Export all types
 export type { MarkdownActions } from './actions'
 export type { 

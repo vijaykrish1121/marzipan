@@ -3,7 +3,7 @@
 ## ✨ Project Snapshot
 
 - **Package:** `@pinkpixel/marzipan`
-- **Version:** 1.0.7 (Production Ready)
+- **Version:** 1.0.8 (Production Ready)
 - **Runtime dependencies:** **Zero** – Pure TypeScript with all markdown actions bundled internally
 - **Plugins:** First-party plugins published from `src/plugins` as tree-shakeable modules (`@pinkpixel/marzipan/plugins/*`)
 - **Demo:** `bakeshop-demo/` - Full-featured React playground demonstrating all capabilities
@@ -83,11 +83,12 @@ Key pillars:
 
 ## 📚 Documentation Overview
 
-Updated October 4, 2025 to reflect the action rewrite and plugin exports:
+Updated October 4, 2025 to reflect v1.0.8 features including toolbar enhancements and theme improvements:
 - `README.md` – top-level orientation, quick start, plugin summary.
 - `docs/` – quick start, API reference, plugin catalogue, and type definitions.
 - `bakeshop-demo/README.md` – demo setup and panel walkthrough.
-- `CHANGELOG.md` – release notes including the dependency-free actions update.
+- `CHANGELOG.md` – release notes including toolbar shorthands, theme aliases, and plugin improvements.
+- **Documentation Website:** https://marzipan.pinkpixel.dev - Comprehensive guides and interactive examples
 
 ## 🔌 Actions & Plugins
 
@@ -96,14 +97,21 @@ Updated October 4, 2025 to reflect the action rewrite and plugin exports:
 **Major Feature:** All markdown formatting logic is now bundled internally, eliminating the need for external dependencies like `markdown-actions`.
 
 **Available Actions:**
-- **Text Formatting:** `toggleBold`, `toggleItalic`, `toggleCode`
+- **Text Formatting:** `toggleBold`, `toggleItalic`, `toggleCode`, `toggleStrikethrough`
 - **Headers:** `insertHeader(level)`, `toggleH1`, `toggleH2`, `toggleH3` (supports H1-H6)
 - **Lists:** `toggleBulletList`, `toggleNumberedList`, `toggleTaskList`
-- **Blocks:** `toggleQuote`
+- **Blocks:** `toggleQuote`, `insertHorizontalRule`
 - **Links:** `insertLink(options)` with smart URL detection
 - **Utilities:** `getActiveFormats`, `hasFormat`, `expandSelection`, `preserveSelection`
 - **Debug Tools:** `setDebugMode`, `getDebugMode` for development
 - **Custom Formats:** `applyCustomFormat` for creating custom formatting rules
+
+**New in v1.0.8 - Toolbar Button Shorthands:**
+Simplified toolbar configuration with string-based button definitions:
+- `'plain'` - Toggle plain text view
+- `'view'` - Toggle preview mode
+- `'|'` - Visual separator
+- Plus all standard formatting buttons with concise syntax
 
 **Usage:**
 ```ts
@@ -137,7 +145,7 @@ actions.insertLink(textarea, { url: 'https://example.com', text: 'Click here' })
   - `tinyHighlightStyles` - Accompanying styles
 - **Media:**
   - `imageManagerPlugin` - Image upload and management
-  - `imagePickerPlugin` - Image selection interface
+  - `imagePickerPlugin` - Image selection interface with customizable prompts (v1.0.8+)
 - **Theming:**
   - `accentSwatchPlugin` - Color accent picker synchronized across instances
 
@@ -191,12 +199,36 @@ The project targets **Node.js 20+** as defined in `package.json` and mirrored in
 
 ## 📊 Project Status
 
-- ✅ **Production Ready** - v1.0.6 stable release
+- ✅ **Production Ready** - v1.0.8 stable release
 - ✅ **Zero Dependencies** - Complete self-contained solution
-- ✅ **Comprehensive Documentation** - Full guides and API reference
+- ✅ **Enhanced Developer Experience** - Toolbar shorthands and simplified configuration
+- ✅ **Flexible Theming** - Light/dark aliases with custom color support
+- ✅ **Comprehensive Documentation** - Full guides, API reference, and live website
 - ✅ **Active Development** - Regular updates and improvements
 - ✅ **Open Source** - Apache 2.0 license, community contributions welcome
 
+## 🆕 What's New in v1.0.8
+
+### Toolbar Enhancements
+- **Button Shorthands**: Configure toolbars with simple strings like `'bold'`, `'plain'`, `'view'`, `'|'` instead of verbose objects
+- **Separator Support**: Add visual dividers between button groups for better organization
+- **Cleaner Configuration**: Reduced boilerplate for common toolbar setups
+
+### Theme System Improvements
+- **Convenience Aliases**: Use `'light'` and `'dark'` alongside `'solar'` and `'cave'`
+- **Per-Instance Overrides**: Each editor instance can have its own theme configuration
+- **Better Color Merging**: Custom color tokens reliably merge with base themes
+- **Table Theme Support**: Tables now respect themed secondary backgrounds
+
+### Plugin Improvements
+- **Image Picker Customization**: Configure `placeholder` and `promptMessage` options
+- **Enhanced Flexibility**: More control over plugin behavior and appearance
+
+### API Additions
+- `getStats()` - Retrieve current editor statistics programmatically
+- `getContainer()` - Access the editor's DOM container element
+- `showPlainTextarea()` - Query or toggle plain text mode
+
 ---
 
-_Last updated: October 4, 2025 – Complete project analysis and enhanced documentation._
+_Last updated: October 4, 2025 – Complete project analysis reflecting v1.0.8 release._
