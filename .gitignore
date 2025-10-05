@@ -26,5 +26,7 @@ dist-ssr
 # Other
 .amazonq/
 docs-site/
+BLOCK_HANDLES_UPDATE_SUMMARY.md
 ROADMAP.md
+TESTING.md
 TYPE_AUDIT_REPORT.md
